@@ -14,6 +14,12 @@ export default {
     },
     extend: {
       colors: {
+        "rosa-bebe": "hsl(var(--rosa-bebe))",
+        "azul-claro": "hsl(var(--azul-claro))",
+        "amarelo-suave": "hsl(var(--amarelo-suave))",
+        "verde-menta": "hsl(var(--verde-menta))",
+        "roxo-suave": "hsl(var(--roxo-suave))",
+        "laranja-suave": "hsl(var(--laranja-suave))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
