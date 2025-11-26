@@ -115,22 +115,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-all border-2 border-rosa-bebe/30 hover:border-rosa-bebe">
-            <CardHeader className="bg-rosa-bebe/20">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-rosa-bebe rounded-full flex items-center justify-center text-2xl">
-                  💰
-                </div>
-                <CardTitle>Serviços e Preços</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <p className="text-sm text-muted-foreground">
-                Consultas, exames e procedimentos
-              </p>
-            </CardContent>
-          </Card>
-
           <Card 
             className="cursor-pointer hover:shadow-lg transition-all border-2 border-verde-menta/30 hover:border-verde-menta"
             onClick={() => navigate("/cartilhas")}
@@ -150,7 +134,48 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-all border-2 border-amarelo-suave/30 hover:border-amarelo-suave">
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-roxo-suave/30 hover:border-roxo-suave"
+            onClick={() => navigate("/ebooks")}
+          >
+            <CardHeader className="bg-roxo-suave/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-roxo-suave rounded-full flex items-center justify-center text-2xl">
+                  📖
+                </div>
+                <CardTitle>E-books</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground">
+                Biblioteca digital de saúde infantil
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-rosa-bebe/30 hover:border-rosa-bebe"
+            onClick={() => navigate("/partners")}
+          >
+            <CardHeader className="bg-rosa-bebe/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-rosa-bebe rounded-full flex items-center justify-center text-2xl">
+                  🤝
+                </div>
+                <CardTitle>Parceiros</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground">
+                Profissionais e colaboradores
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-amarelo-suave/30 hover:border-amarelo-suave"
+            onClick={() => navigate("/location")}
+          >
             <CardHeader className="bg-amarelo-suave/20">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-amarelo-suave rounded-full flex items-center justify-center text-2xl">
@@ -166,23 +191,48 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-all border-2 border-roxo-suave/30 hover:border-roxo-suave">
-            <CardHeader className="bg-roxo-suave/20">
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-azul-claro/30 hover:border-azul-claro"
+            onClick={() => navigate("/appointments")}
+          >
+            <CardHeader className="bg-azul-claro/20">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-roxo-suave rounded-full flex items-center justify-center text-2xl">
-                  💳
+                <div className="w-12 h-12 bg-azul-claro rounded-full flex items-center justify-center text-2xl">
+                  📅
                 </div>
-                <CardTitle>Pagamento PIX</CardTitle>
+                <CardTitle>Consultas</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
               <p className="text-sm text-muted-foreground">
-                Faça seu pagamento de forma rápida
+                Veja suas consultas agendadas
               </p>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-all border-2 border-laranja-suave/30 hover:border-laranja-suave">
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-verde-menta/30 hover:border-verde-menta"
+            onClick={() => navigate("/payment")}
+          >
+            <CardHeader className="bg-verde-menta/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-verde-menta rounded-full flex items-center justify-center text-2xl">
+                  💳
+                </div>
+                <CardTitle>Pagamento</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground">
+                Informações para pagamento
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-laranja-suave/30 hover:border-laranja-suave"
+            onClick={() => navigate("/satisfaction")}
+          >
             <CardHeader className="bg-laranja-suave/20">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-laranja-suave rounded-full flex items-center justify-center text-2xl">
@@ -199,42 +249,6 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Info Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="border-2 border-primary/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-primary" />
-                Onde Estamos
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-2">
-                Av. Artemia Postes, 8220
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Horário: Segunda a Sexta, 8h às 18h
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-success/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart className="w-5 h-5 text-success" />
-                Próxima Consulta
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-2">
-                Você não tem consultas agendadas
-              </p>
-              <Button variant="outline" size="sm" className="mt-2">
-                Agendar Consulta
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
       </main>
     </div>
     </>

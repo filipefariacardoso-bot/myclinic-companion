@@ -202,6 +202,75 @@ export default function Admin() {
           </Card>
         </div>
 
+        {/* Gerenciamento Rápido */}
+        <Card className="border-2 border-azul-claro/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              ⚙️ Gerenciamento de Conteúdo
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => navigate("/admin/cartilhas")}
+              >
+                <span className="text-2xl">📚</span>
+                <span className="text-sm">Cartilhas</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => window.location.href = "/admin/ebooks"}
+              >
+                <span className="text-2xl">📖</span>
+                <span className="text-sm">E-books</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => window.location.href = "/admin/partners"}
+              >
+                <span className="text-2xl">🤝</span>
+                <span className="text-sm">Parceiros</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => window.location.href = "/admin/payment"}
+              >
+                <span className="text-2xl">💳</span>
+                <span className="text-sm">Pagamento</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => window.location.href = "/admin/location"}
+              >
+                <span className="text-2xl">📍</span>
+                <span className="text-sm">Localização</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => window.location.href = "/admin/appointments"}
+              >
+                <span className="text-2xl">📅</span>
+                <span className="text-sm">Consultas</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => window.location.href = "/admin/satisfaction"}
+              >
+                <span className="text-2xl">⭐</span>
+                <span className="text-sm">Avaliações</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Daily Registrations Chart */}
         <Card className="border-2 border-azul-claro/30">
           <CardHeader>

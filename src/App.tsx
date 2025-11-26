@@ -11,6 +11,12 @@ import Admin from "./pages/Admin";
 import PatientDetails from "./pages/PatientDetails";
 import Cartilhas from "./pages/Cartilhas";
 import AdminCartilhas from "./pages/AdminCartilhas";
+import Partners from "./pages/Partners";
+import Payment from "./pages/Payment";
+import Location from "./pages/Location";
+import Appointments from "./pages/Appointments";
+import Ebooks from "./pages/Ebooks";
+import Satisfaction from "./pages/Satisfaction";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -68,6 +74,36 @@ const App = () => (
             <Route path="/cartilhas" element={
               <ProtectedRoute>
                 <Cartilhas />
+              </ProtectedRoute>
+            } />
+            <Route path="/partners" element={
+              <ProtectedRoute>
+                <Partners />
+              </ProtectedRoute>
+            } />
+            <Route path="/payment" element={
+              <ProtectedRoute>
+                <Payment />
+              </ProtectedRoute>
+            } />
+            <Route path="/location" element={
+              <ProtectedRoute>
+                <Location />
+              </ProtectedRoute>
+            } />
+            <Route path="/appointments" element={
+              <ProtectedRoute>
+                <Appointments />
+              </ProtectedRoute>
+            } />
+            <Route path="/ebooks" element={
+              <ProtectedRoute>
+                <Ebooks />
+              </ProtectedRoute>
+            } />
+            <Route path="/satisfaction" element={
+              <ProtectedRoute>
+                <Satisfaction />
               </ProtectedRoute>
             } />
             <Route path="/admin/cartilhas" element={
