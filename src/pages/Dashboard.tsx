@@ -1,12 +1,41 @@
 import { useAuth } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogOut, FileText, MapPin, Heart, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import ConsentDialog from "@/components/ConsentDialog";
 
 export default function Dashboard() {
   const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [showConsent, setShowConsent] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkConsent();
+  }, [user]);
+
+  const checkConsent = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("consent_given")
+        .eq("id", user.id)
+        .single();
+
+      if (!error && data && !data.consent_given) {
+        setShowConsent(true);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar consentimento:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -18,7 +47,16 @@ export default function Dashboard() {
     return null;
   }
 
+  if (loading) {
+    return null;
+  }
+
   return (
+    <>
+      <ConsentDialog 
+        open={showConsent} 
+        onConsentGiven={() => setShowConsent(false)} 
+      />
     <div className="min-h-screen bg-gradient-to-br from-background via-azul-claro/20 to-rosa-bebe/20">
       {/* Header */}
       <header className="bg-gradient-to-r from-azul-claro to-rosa-bebe p-6 rounded-b-3xl shadow-lg">
@@ -196,5 +234,6 @@ export default function Dashboard() {
         </div>
       </main>
     </div>
+    </>
   );
 }
