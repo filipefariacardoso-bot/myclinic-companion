@@ -67,6 +67,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          consent_date: string | null
+          consent_given: boolean
           created_at: string | null
           email: string
           full_name: string
@@ -75,6 +77,8 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          consent_date?: string | null
+          consent_given?: boolean
           created_at?: string | null
           email: string
           full_name: string
@@ -83,6 +87,8 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          consent_date?: string | null
+          consent_given?: boolean
           created_at?: string | null
           email?: string
           full_name?: string

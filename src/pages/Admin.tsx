@@ -4,7 +4,8 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, Users, FileText, Calendar, TrendingUp } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { LogOut, Users, FileText, Calendar, TrendingUp, Eye } from "lucide-react";
 import { format, startOfDay, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -26,11 +27,21 @@ interface Questionnaire {
   };
 }
 
+interface PatientProfile {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  created_at: string;
+  consent_given: boolean;
+}
+
 export default function Admin() {
   const { isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const [dailyRegistrations, setDailyRegistrations] = useState<DailyStats[]>([]);
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
+  const [allPatients, setAllPatients] = useState<PatientProfile[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [todayCount, setTodayCount] = useState(0);
 
@@ -52,10 +63,11 @@ export default function Admin() {
 
     const { data: profiles, error: profilesError } = await supabase
       .from("profiles")
-      .select("created_at")
+      .select("*")
       .order("created_at", { ascending: false });
 
     if (!profilesError && profiles) {
+      setAllPatients(profiles);
       setTotalUsers(profiles.length);
 
       // Count registrations by day
@@ -198,6 +210,71 @@ export default function Admin() {
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Todos os Pacientes */}
+        <Card className="border-2 border-azul-claro/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-azul-claro" />
+              Todos os Pacientes Cadastrados
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {allPatients.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                Nenhum paciente cadastrado
+              </p>
+            ) : (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome Completo</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Telefone</TableHead>
+                      <TableHead>Data de Cadastro</TableHead>
+                      <TableHead>Consentimento</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {allPatients.map((patient) => (
+                      <TableRow key={patient.id}>
+                        <TableCell className="font-medium">{patient.full_name}</TableCell>
+                        <TableCell>{patient.email}</TableCell>
+                        <TableCell>{patient.phone || "-"}</TableCell>
+                        <TableCell>
+                          {format(new Date(patient.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                        </TableCell>
+                        <TableCell>
+                          {patient.consent_given ? (
+                            <span className="px-2 py-1 rounded-full bg-success/20 text-success text-xs font-medium">
+                              ✓ Sim
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 rounded-full bg-warning/20 text-warning text-xs font-medium">
+                              ⚠ Não
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => navigate(`/admin/patient/${patient.id}`)}
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            Ver Detalhes
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </CardContent>
         </Card>
 
