@@ -8,8 +8,16 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Cores Pastéis Lúdicas da Clínica */
+    --rosa-bebe: 343 89% 90%;
+    --azul-claro: 202 77% 91%;
+    --amarelo-suave: 45 100% 94%;
+    --verde-menta: 162 48% 92%;
+    --roxo-suave: 269 60% 92%;
+    --laranja-suave: 37 100% 88%;
+    
+    --background: 40 30% 98%;
+    --foreground: 210 22% 22%;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -17,17 +25,17 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 202 85% 62%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 343 89% 90%;
+    --secondary-foreground: 210 22% 22%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 162 48% 92%;
+    --accent-foreground: 210 22% 22%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
