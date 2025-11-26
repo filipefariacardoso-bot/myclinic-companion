@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          appointment_date: string
+          appointment_type: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          patient_name: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          appointment_date: string
+          appointment_type: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          patient_name: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          appointment_date?: string
+          appointment_type?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          patient_name?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       cartilhas: {
         Row: {
           created_at: string | null
@@ -37,6 +73,90 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           file_type?: string
+          file_url?: string
+          id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      clinic_location: {
+        Row: {
+          address: string
+          city: string
+          created_at: string | null
+          email: string | null
+          id: string
+          is_active: boolean | null
+          map_url: string | null
+          name: string
+          opening_hours: string | null
+          phone: string | null
+          state: string
+          updated_at: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          map_url?: string | null
+          name: string
+          opening_hours?: string | null
+          phone?: string | null
+          state: string
+          updated_at?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          map_url?: string | null
+          name?: string
+          opening_hours?: string | null
+          phone?: string | null
+          state?: string
+          updated_at?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
+      ebooks: {
+        Row: {
+          author: string | null
+          category: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          file_url: string
+          id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          file_url: string
+          id?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
           file_url?: string
           id?: string
           title?: string
@@ -92,6 +212,84 @@ export type Database = {
           status?: string | null
           submitted_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      partners: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          email: string | null
+          id: string
+          image_url: string | null
+          name: string
+          phone: string | null
+          specialty: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      payment_info: {
+        Row: {
+          bank_info: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          instructions: string | null
+          is_active: boolean | null
+          pix_key: string | null
+          pix_key_type: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          bank_info?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          pix_key?: string | null
+          pix_key_type?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          bank_info?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          pix_key?: string | null
+          pix_key_type?: string | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
