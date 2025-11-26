@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { LogOut, Users, FileText, Calendar, TrendingUp, Eye } from "lucide-react";
+import { LogOut, Users, FileText, Calendar, TrendingUp, Eye, BookOpen } from "lucide-react";
 import { format, startOfDay, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -154,7 +154,7 @@ export default function Admin() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-4 gap-6">
           <Card className="border-2 border-primary/30">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
@@ -185,6 +185,19 @@ export default function Admin() {
             <CardContent>
               <div className="text-3xl font-bold text-warning">{questionnaires.length}</div>
               <p className="text-xs text-muted-foreground mt-1">Pendentes</p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="border-2 border-verde-menta/30 cursor-pointer hover:shadow-lg transition-all"
+            onClick={() => navigate("/admin/cartilhas")}
+          >
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Cartilhas</CardTitle>
+              <BookOpen className="w-4 h-4 text-verde-menta" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Gerenciar materiais</p>
             </CardContent>
           </Card>
         </div>
