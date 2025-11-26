@@ -9,6 +9,8 @@ import Dashboard from "./pages/Dashboard";
 import Questionnaire from "./pages/Questionnaire";
 import Admin from "./pages/Admin";
 import PatientDetails from "./pages/PatientDetails";
+import Cartilhas from "./pages/Cartilhas";
+import AdminCartilhas from "./pages/AdminCartilhas";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +63,16 @@ const App = () => (
             <Route path="/admin/patient/:id" element={
               <ProtectedRoute>
                 <PatientDetails />
+              </ProtectedRoute>
+            } />
+            <Route path="/cartilhas" element={
+              <ProtectedRoute>
+                <Cartilhas />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/cartilhas" element={
+              <ProtectedRoute>
+                <AdminCartilhas />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

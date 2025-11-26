@@ -131,18 +131,21 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-all border-2 border-verde-menta/30 hover:border-verde-menta">
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-verde-menta/30 hover:border-verde-menta"
+            onClick={() => navigate("/cartilhas")}
+          >
             <CardHeader className="bg-verde-menta/20">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-verde-menta rounded-full flex items-center justify-center text-2xl">
                   📚
                 </div>
-                <CardTitle>Cartilha</CardTitle>
+                <CardTitle>Cartilhas</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
               <p className="text-sm text-muted-foreground">
-                Dicas para antes, durante e após a consulta
+                Materiais educativos sobre saúde infantil
               </p>
             </CardContent>
           </Card>

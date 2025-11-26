@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      cartilhas: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          file_type: string
+          file_url: string
+          id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          file_type: string
+          file_url: string
+          id?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       medical_questionnaires: {
         Row: {
           birth_weight: string | null
