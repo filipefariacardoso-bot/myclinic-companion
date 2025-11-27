@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'sans': ['Quicksand', 'Fredoka', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        'rounded': ['Fredoka', 'Quicksand', 'sans-serif'],
+      },
       colors: {
         "rosa-bebe": "hsl(var(--rosa-bebe))",
         "azul-claro": "hsl(var(--azul-claro))",

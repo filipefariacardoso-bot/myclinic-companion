@@ -43,8 +43,8 @@ export default function Ebooks() {
     }
   };
 
-  const handleView = (url: string) => {
-    window.open(url, "_blank");
+  const handleView = (id: string) => {
+    navigate(`/ebooks/${id}`);
   };
 
   const handleDownload = async (url: string, title: string) => {
@@ -148,7 +148,7 @@ export default function Ebooks() {
                   )}
                   <div className="flex gap-2">
                     <Button
-                      onClick={() => handleView(ebook.file_url)}
+                      onClick={() => handleView(ebook.id)}
                       variant="default"
                       size="sm"
                       className="flex-1"

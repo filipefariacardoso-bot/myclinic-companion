@@ -41,8 +41,8 @@ export default function Cartilhas() {
     }
   };
 
-  const handleViewFile = (fileUrl: string) => {
-    window.open(fileUrl, "_blank");
+  const handleViewFile = (id: string) => {
+    navigate(`/cartilhas/${id}`);
   };
 
   const handleDownloadFile = async (fileUrl: string, title: string) => {
@@ -132,7 +132,7 @@ export default function Cartilhas() {
                   )}
                   <div className="flex gap-2">
                     <Button
-                      onClick={() => handleViewFile(cartilha.file_url)}
+                      onClick={() => handleViewFile(cartilha.id)}
                       variant="default"
                       size="sm"
                       className="flex-1"
