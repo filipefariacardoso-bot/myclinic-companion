@@ -10,12 +10,14 @@ import Questionnaire from "./pages/Questionnaire";
 import Admin from "./pages/Admin";
 import PatientDetails from "./pages/PatientDetails";
 import Cartilhas from "./pages/Cartilhas";
+import ViewCartilha from "./pages/ViewCartilha";
 import AdminCartilhas from "./pages/AdminCartilhas";
 import Partners from "./pages/Partners";
 import Payment from "./pages/Payment";
 import Location from "./pages/Location";
 import Appointments from "./pages/Appointments";
 import Ebooks from "./pages/Ebooks";
+import ViewEbook from "./pages/ViewEbook";
 import Satisfaction from "./pages/Satisfaction";
 import NotFound from "./pages/NotFound";
 
@@ -76,6 +78,11 @@ const App = () => (
                 <Cartilhas />
               </ProtectedRoute>
             } />
+            <Route path="/cartilhas/:id" element={
+              <ProtectedRoute>
+                <ViewCartilha />
+              </ProtectedRoute>
+            } />
             <Route path="/partners" element={
               <ProtectedRoute>
                 <Partners />
@@ -99,6 +106,11 @@ const App = () => (
             <Route path="/ebooks" element={
               <ProtectedRoute>
                 <Ebooks />
+              </ProtectedRoute>
+            } />
+            <Route path="/ebooks/:id" element={
+              <ProtectedRoute>
+                <ViewEbook />
               </ProtectedRoute>
             } />
             <Route path="/satisfaction" element={
