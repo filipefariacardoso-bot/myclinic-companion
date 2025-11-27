@@ -2,10 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Document, Page, pdfjs } from "react-pdf";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Download, Printer } from "lucide-react";
+import { ArrowLeft, Download, Printer, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+
+// Configurar worker do PDF.js
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface DocumentViewerProps {
   fileUrl: string;
@@ -17,9 +23,34 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
   const navigate = useNavigate();
   const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [isPDF, setIsPDF] = useState(false);
+  const [numPages, setNumPages] = useState<number>(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageWidth, setPageWidth] = useState(0);
 
   useEffect(() => {
-    loadDocument();
+    // Detectar se é PDF pela URL ou extensão
+    const urlLower = fileUrl.toLowerCase();
+    const isPDFFile = urlLower.endsWith('.pdf') || urlLower.includes('.pdf?');
+    setIsPDF(isPDFFile);
+    
+    if (!isPDFFile) {
+      loadDocument();
+    } else {
+      setLoading(false);
+    }
+    
+    // Calcular largura da página baseado na tela
+    const updateWidth = () => {
+      const container = document.getElementById('pdf-container');
+      if (container) {
+        setPageWidth(Math.min(container.clientWidth - 32, 900));
+      }
+    };
+    
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
   }, [fileUrl]);
 
   const loadDocument = async () => {
@@ -56,6 +87,19 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setPageNumber(1);
+  };
+
+  const goToPrevPage = () => {
+    setPageNumber((prev) => Math.max(prev - 1, 1));
+  };
+
+  const goToNextPage = () => {
+    setPageNumber((prev) => Math.min(prev + 1, numPages));
   };
 
   return (
@@ -106,131 +150,75 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
       </header>
 
       {/* Documento tipo revista digital */}
-      <main className="max-w-5xl mx-auto p-4 md:p-8 lg:p-12 print:p-8 relative z-10">
+      <main className="max-w-5xl mx-auto p-4 md:p-8 lg:p-12 print:p-8 relative z-10" id="pdf-container">
         {loading ? (
           <div className="text-center py-32">
             <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-rosa-bebe via-roxo-suave to-azul-claro rounded-full animate-pulse shadow-2xl" />
             <p className="text-2xl text-foreground font-rounded font-bold animate-pulse">Carregando documento...</p>
           </div>
+        ) : isPDF ? (
+          <Card className="bg-white/95 backdrop-blur-xl shadow-2xl border-0 rounded-3xl overflow-hidden print:shadow-none">
+            <div className="p-6 md:p-10">
+              <Document
+                file={fileUrl}
+                onLoadSuccess={onDocumentLoadSuccess}
+                loading={
+                  <div className="text-center py-32">
+                    <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-rosa-bebe via-roxo-suave to-azul-claro rounded-full animate-pulse shadow-2xl" />
+                    <p className="text-2xl text-foreground font-rounded font-bold animate-pulse">Carregando PDF...</p>
+                  </div>
+                }
+                error={
+                  <div className="text-center py-32">
+                    <p className="text-xl text-destructive font-rounded font-bold">Erro ao carregar PDF</p>
+                    <p className="text-muted-foreground mt-4">Tente fazer o download do arquivo</p>
+                  </div>
+                }
+              >
+                <div className="flex flex-col items-center space-y-6">
+                  <Page
+                    pageNumber={pageNumber}
+                    width={pageWidth || 800}
+                    renderTextLayer={true}
+                    renderAnnotationLayer={true}
+                    className="shadow-2xl rounded-xl overflow-hidden"
+                  />
+                  
+                  {numPages > 1 && (
+                    <div className="flex items-center gap-4 bg-gradient-to-r from-rosa-bebe/20 to-azul-claro/20 px-6 py-4 rounded-2xl shadow-lg print:hidden">
+                      <Button
+                        onClick={goToPrevPage}
+                        disabled={pageNumber <= 1}
+                        variant="outline"
+                        size="lg"
+                        className="bg-white/90 hover:bg-white hover:scale-105 transition-all"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </Button>
+                      <p className="text-lg font-rounded font-bold text-foreground min-w-[120px] text-center">
+                        Página {pageNumber} de {numPages}
+                      </p>
+                      <Button
+                        onClick={goToNextPage}
+                        disabled={pageNumber >= numPages}
+                        variant="outline"
+                        size="lg"
+                        className="bg-white/90 hover:bg-white hover:scale-105 transition-all"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </Document>
+            </div>
+          </Card>
         ) : (
           <Card className="bg-white/95 backdrop-blur-xl shadow-2xl border-0 rounded-3xl overflow-hidden print:shadow-none">
             <div className="p-6 md:p-10 lg:p-16">
               <article className="
                 prose prose-xl max-w-none
-                font-rounded
-                
-                [&>*]:animate-fade-in
-                
-                prose-headings:font-rounded prose-headings:font-black
-                
-                prose-h1:text-4xl md:prose-h1:text-6xl lg:prose-h1:text-7xl
-                prose-h1:text-center prose-h1:mb-16 prose-h1:mt-8
-                prose-h1:p-10 md:prose-h1:p-16 prose-h1:rounded-3xl
-                prose-h1:bg-gradient-to-br prose-h1:from-rosa-bebe/90 prose-h1:via-roxo-suave/90 prose-h1:to-azul-claro/90
-                prose-h1:text-white prose-h1:shadow-2xl prose-h1:leading-tight
-                prose-h1:border-8 prose-h1:border-white/50
-                prose-h1:transform prose-h1:hover:scale-[1.02] prose-h1:transition-transform prose-h1:duration-300
-                
-                prose-h2:text-3xl md:prose-h2:text-5xl lg:prose-h2:text-6xl
-                prose-h2:font-black prose-h2:mt-16 prose-h2:mb-8
-                prose-h2:p-8 md:prose-h2:p-10 prose-h2:rounded-2xl prose-h2:shadow-2xl
-                prose-h2:bg-gradient-to-br prose-h2:from-azul-claro/20 prose-h2:via-verde-menta/20 prose-h2:to-amarelo-suave/20
-                prose-h2:border-l-[12px] prose-h2:border-azul-claro
-                prose-h2:text-azul-claro prose-h2:leading-tight
-                prose-h2:backdrop-blur-sm
-                
-                prose-h3:text-2xl md:prose-h3:text-4xl
-                prose-h3:font-bold prose-h3:mt-12 prose-h3:mb-6
-                prose-h3:text-verde-menta prose-h3:pl-6 
-                prose-h3:border-l-8 prose-h3:border-verde-menta
-                prose-h3:bg-verde-menta/10 prose-h3:p-6 prose-h3:rounded-xl
-                prose-h3:shadow-lg
-                
-                prose-h4:text-xl md:prose-h4:text-3xl
-                prose-h4:font-bold prose-h4:mt-8 prose-h4:mb-4
-                prose-h4:text-roxo-suave 
-                prose-h4:bg-gradient-to-r prose-h4:from-roxo-suave/20 prose-h4:to-rosa-bebe/20
-                prose-h4:p-5 prose-h4:rounded-xl prose-h4:shadow-md
-                
-                prose-p:text-lg md:prose-p:text-xl prose-p:leading-relaxed prose-p:mb-6
-                prose-p:text-foreground/90 prose-p:bg-white/60 
-                prose-p:p-6 md:prose-p:p-8 prose-p:rounded-2xl 
-                prose-p:shadow-md prose-p:backdrop-blur-sm
-                prose-p:border-l-4 prose-p:border-rosa-bebe/30
-                
-                prose-strong:text-primary prose-strong:font-black 
-                prose-strong:text-xl md:prose-strong:text-2xl
-                prose-strong:bg-amarelo-suave/30 prose-strong:px-2 prose-strong:py-1 
-                prose-strong:rounded prose-strong:shadow-sm
-                
-                prose-em:italic prose-em:text-muted-foreground 
-                prose-em:text-lg prose-em:font-medium
-                
-                prose-a:text-azul-claro prose-a:font-bold 
-                prose-a:underline prose-a:decoration-4 prose-a:decoration-azul-claro/50
-                hover:prose-a:text-roxo-suave hover:prose-a:decoration-roxo-suave
-                hover:prose-a:scale-105 prose-a:inline-block prose-a:transition-all
-                
-                prose-ul:my-8 prose-ul:space-y-4 prose-ul:list-none
-                prose-ul:bg-gradient-to-br prose-ul:from-rosa-bebe/15 prose-ul:to-amarelo-suave/15
-                prose-ul:p-8 md:prose-ul:p-10 prose-ul:rounded-3xl 
-                prose-ul:shadow-xl prose-ul:backdrop-blur-sm
-                prose-ul:border-4 prose-ul:border-rosa-bebe/20
-                
-                prose-ol:my-8 prose-ol:space-y-4 prose-ol:list-none
-                prose-ol:bg-gradient-to-br prose-ol:from-verde-menta/15 prose-ol:to-azul-claro/15
-                prose-ol:p-8 md:prose-ol:p-10 prose-ol:rounded-3xl 
-                prose-ol:shadow-xl prose-ol:backdrop-blur-sm
-                prose-ol:border-4 prose-ol:border-verde-menta/20
-                
-                prose-li:mb-4 prose-li:pl-16 prose-li:relative 
-                prose-li:text-lg md:prose-li:text-xl
-                prose-li:bg-white/80 prose-li:p-5 md:prose-li:p-6 
-                prose-li:rounded-xl prose-li:shadow-md
-                prose-li:border-l-4 prose-li:border-azul-claro/30
-                prose-li:backdrop-blur-sm
-                prose-li:hover:scale-[1.02] prose-li:transition-transform
-                prose-li:before:content-['✨'] prose-li:before:absolute 
-                prose-li:before:left-5 prose-li:before:text-3xl 
-                prose-li:before:top-4 prose-li:before:drop-shadow-lg
-                
-                prose-table:border-collapse prose-table:w-full 
-                prose-table:my-10 prose-table:shadow-2xl
-                prose-table:rounded-2xl prose-table:overflow-hidden
-                prose-table:bg-white
-                
-                prose-thead:bg-gradient-to-r prose-thead:from-rosa-bebe 
-                prose-thead:via-roxo-suave prose-thead:to-azul-claro
-                
-                prose-th:p-6 prose-th:text-left prose-th:font-black 
-                prose-th:text-white prose-th:text-xl prose-th:border-0
-                
-                prose-td:p-6 prose-td:border-0 prose-td:text-lg 
-                prose-td:bg-white/90 prose-td:font-medium
-                
-                prose-tr:even:bg-gradient-to-r prose-tr:even:from-azul-claro/10 
-                prose-tr:even:to-verde-menta/10
-                prose-tr:hover:bg-rosa-bebe/10 prose-tr:transition-colors
-                
-                prose-blockquote:border-l-[12px] prose-blockquote:border-verde-menta
-                prose-blockquote:pl-8 prose-blockquote:pr-8 prose-blockquote:py-6
-                prose-blockquote:my-8 prose-blockquote:italic 
-                prose-blockquote:font-semibold prose-blockquote:text-xl
-                prose-blockquote:bg-gradient-to-r prose-blockquote:from-verde-menta/20 
-                prose-blockquote:to-azul-claro/20
-                prose-blockquote:rounded-r-2xl prose-blockquote:shadow-2xl
-                prose-blockquote:backdrop-blur-sm
-                
-                prose-code:bg-amarelo-suave/60 prose-code:px-4 prose-code:py-2
-                prose-code:rounded-xl prose-code:text-lg prose-code:font-bold
-                prose-code:border-2 prose-code:border-amarelo-suave/50
-                prose-code:shadow-md
-                
-                prose-hr:border-0 prose-hr:h-3 prose-hr:my-16
-                prose-hr:bg-gradient-to-r prose-hr:from-rosa-bebe 
-                prose-hr:via-roxo-suave prose-hr:via-azul-claro 
-                prose-hr:to-verde-menta
-                prose-hr:rounded-full prose-hr:shadow-xl
+...
               ">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {content}
