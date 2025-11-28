@@ -76,87 +76,68 @@ export default function ConsentDialog({ open, onConsentGiven }: ConsentDialogPro
         <ScrollArea className="h-[400px] w-full rounded-md border p-4">
           <div className="space-y-4 text-sm">
             <section>
-              <h3 className="font-bold text-lg mb-2">Autorização para Acesso a Informações Médicas</h3>
-              <p className="text-muted-foreground">
-                Este documento tem por objetivo solicitar sua autorização para que o médico 
-                responsável pelo atendimento na <strong>CuidarBem Pediatria</strong> possa ter 
-                acesso às informações médicas que você forneceu através do cadastro e dos 
-                questionários médicos preenchidos neste aplicativo.
+              <h3 className="font-bold text-lg mb-3 text-center">
+                TERMO DE CONSENTIMENTO PARA USO DE INFORMAÇÕES DIGITAIS
+              </h3>
+              <p className="text-center font-semibold mb-2">
+                Aplicativo CuidarBem — Lumi Clínica Pediátrica
+              </p>
+              <p className="text-muted-foreground text-justify">
+                Nos termos da legislação brasileira vigente, especialmente da <strong>Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018 – LGPD)</strong> e do <strong>Marco Civil da Internet (Lei nº 12.965/2014)</strong>, ao utilizar o aplicativo CuidarBem, da Lumi Clínica Pediátrica, o(a) responsável legal pelo paciente declara estar ciente e de acordo com as condições abaixo:
               </p>
             </section>
 
             <section>
-              <h3 className="font-bold mb-2">1. Dados Coletados</h3>
-              <p className="text-muted-foreground">
-                As informações incluem, mas não se limitam a:
+              <h3 className="font-bold mb-2">1. FINALIDADE DAS INFORMAÇÕES</h3>
+              <p className="text-muted-foreground text-justify">
+                As informações fornecidas no aplicativo, incluindo dados pessoais do responsável e da criança, assim como informações relacionadas à saúde do paciente, serão utilizadas exclusivamente para fins de atendimento clínico, acompanhamento médico e organização de prontuário eletrônico.
               </p>
+            </section>
+
+            <section>
+              <h3 className="font-bold mb-2">2. SIGILO E CONFIDENCIALIDADE</h3>
+              <p className="text-muted-foreground text-justify">
+                A Lumi Clínica Pediátrica compromete-se a manter sigilo absoluto sobre todas as informações, utilizando os dados apenas no contexto do atendimento médico. Nenhuma informação será divulgada ou publicada sem autorização expressa do responsável.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="font-bold mb-2">3. PROTEÇÃO DE DADOS</h3>
+              <p className="text-muted-foreground text-justify">
+                Os dados são armazenados em ambiente seguro, observando princípios de confidencialidade e integridade. A clínica não vende, cede ou comercializa informações pessoais.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="font-bold mb-2">4. CONSENTIMENTO LIVRE E INFORMADO</h3>
+              <p className="text-muted-foreground text-justify">
+                Ao aceitar este termo, o(a) responsável autoriza o uso das informações para atendimento clínico e acompanhamento pediátrico.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="font-bold mb-2">5. DIREITO À PRIVACIDADE</h3>
+              <p className="text-muted-foreground text-justify">
+                O responsável pode solicitar acesso, correção e, quando aplicável, exclusão dos dados, nos termos da legislação vigente.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="font-bold mb-2">6. FUNDAMENTAÇÃO LEGAL</h3>
+              <p className="text-muted-foreground mb-2">Baseado em:</p>
               <ul className="list-disc list-inside ml-4 text-muted-foreground space-y-1">
-                <li>Nome completo e dados de contato</li>
-                <li>Informações sobre a criança (nome, idade, sexo)</li>
-                <li>Queixas médicas principais</li>
-                <li>Histórico de saúde da criança</li>
-                <li>Medicamentos em uso</li>
-                <li>Informações sobre nascimento e gestação</li>
+                <li>Lei Geral de Proteção de Dados – Lei nº 13.709/2018</li>
+                <li>Marco Civil da Internet – Lei nº 12.965/2014</li>
+                <li>Código de Ética Médica</li>
+                <li>Estatuto da Criança e do Adolescente – Lei nº 8.069/1990</li>
               </ul>
-            </section>
-
-            <section>
-              <h3 className="font-bold mb-2">2. Finalidade do Acesso</h3>
-              <p className="text-muted-foreground">
-                As informações serão utilizadas exclusivamente para:
-              </p>
-              <ul className="list-disc list-inside ml-4 text-muted-foreground space-y-1">
-                <li>Preparação prévia do atendimento médico</li>
-                <li>Melhor compreensão do quadro clínico da criança</li>
-                <li>Otimização do tempo de consulta</li>
-                <li>Registro adequado no prontuário médico</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="font-bold mb-2">3. Confidencialidade e Sigilo</h3>
-              <p className="text-muted-foreground">
-                Todas as informações fornecidas são protegidas por sigilo médico conforme 
-                estabelecido pelo <strong>Código de Ética Médica</strong> e pela 
-                <strong> Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018)</strong>.
-              </p>
-              <p className="text-muted-foreground mt-2">
-                Somente o médico responsável pelo seu atendimento e a equipe administrativa 
-                autorizada terão acesso às suas informações.
-              </p>
-            </section>
-
-            <section>
-              <h3 className="font-bold mb-2">4. Direitos do Paciente</h3>
-              <p className="text-muted-foreground">
-                Você tem o direito de:
-              </p>
-              <ul className="list-disc list-inside ml-4 text-muted-foreground space-y-1">
-                <li>Solicitar a correção de dados incorretos</li>
-                <li>Solicitar a exclusão de suas informações a qualquer momento</li>
-                <li>Revogar este consentimento, impedindo novos acessos</li>
-                <li>Obter informações sobre como seus dados são utilizados</li>
-              </ul>
-            </section>
-
-            <section>
-              <h3 className="font-bold mb-2">5. Revogação do Consentimento</h3>
-              <p className="text-muted-foreground">
-                Este consentimento pode ser revogado a qualquer momento através de solicitação 
-                direta à clínica ou pelo próprio aplicativo. A revogação não afeta o atendimento 
-                médico, mas pode impactar a qualidade da preparação prévia do profissional.
-              </p>
             </section>
 
             <section className="pt-4 border-t">
-              <p className="text-muted-foreground">
-                <strong>Ao aceitar este termo, você declara:</strong>
+              <h3 className="font-bold mb-2">7. DECLARAÇÃO FINAL</h3>
+              <p className="text-muted-foreground text-justify">
+                Ao aceitar este termo, o responsável declara que compreende e concorda com o tratamento das informações conforme descrito.
               </p>
-              <ul className="list-disc list-inside ml-4 text-muted-foreground space-y-1 mt-2">
-                <li>Ter lido e compreendido todas as informações acima</li>
-                <li>Concordar com o acesso do médico às suas informações médicas</li>
-                <li>Estar ciente dos seus direitos e da finalidade do uso dos dados</li>
-              </ul>
             </section>
           </div>
         </ScrollArea>
