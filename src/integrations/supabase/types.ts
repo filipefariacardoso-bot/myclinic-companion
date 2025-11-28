@@ -166,52 +166,139 @@ export type Database = {
       }
       medical_questionnaires: {
         Row: {
+          additional_observations: string | null
           birth_weight: string | null
           child_age: string
           child_name: string
           child_sex: string
           complaint_details: string | null
+          consanguinity_degree: string | null
+          consultation_reason: string | null
+          current_illness_history: string | null
+          current_medications: string | null
+          delivery_complications: string | null
           delivery_type: string | null
+          development_observations: string | null
+          development_perception: string | null
+          family_medical_history: string | null
+          first_steps_age: string | null
+          first_words_age: string | null
+          gestational_age: string | null
+          has_been_hospitalized: boolean | null
+          has_had_surgeries: boolean | null
           health_history: string | null
+          hospitalization_details: string | null
           id: string
+          known_allergies: string | null
+          last_vaccination_date: string | null
           main_complaint: string
+          main_symptoms: string[] | null
           medications: string | null
+          parents_concerns: string | null
+          parents_consanguinity: boolean | null
+          past_medical_history: string | null
           pregnancy_complications: string | null
+          recent_diseases: string | null
+          specific_questions: string | null
+          sphincter_control_age: string | null
           status: string | null
           submitted_at: string | null
+          surgery_details: string | null
+          symptoms_duration: string | null
+          urgency_level: string | null
           user_id: string
+          vaccination_card_status: string | null
+          vaccination_details: string | null
         }
         Insert: {
+          additional_observations?: string | null
           birth_weight?: string | null
           child_age: string
           child_name: string
           child_sex: string
           complaint_details?: string | null
+          consanguinity_degree?: string | null
+          consultation_reason?: string | null
+          current_illness_history?: string | null
+          current_medications?: string | null
+          delivery_complications?: string | null
           delivery_type?: string | null
+          development_observations?: string | null
+          development_perception?: string | null
+          family_medical_history?: string | null
+          first_steps_age?: string | null
+          first_words_age?: string | null
+          gestational_age?: string | null
+          has_been_hospitalized?: boolean | null
+          has_had_surgeries?: boolean | null
           health_history?: string | null
+          hospitalization_details?: string | null
           id?: string
+          known_allergies?: string | null
+          last_vaccination_date?: string | null
           main_complaint: string
+          main_symptoms?: string[] | null
           medications?: string | null
+          parents_concerns?: string | null
+          parents_consanguinity?: boolean | null
+          past_medical_history?: string | null
           pregnancy_complications?: string | null
+          recent_diseases?: string | null
+          specific_questions?: string | null
+          sphincter_control_age?: string | null
           status?: string | null
           submitted_at?: string | null
+          surgery_details?: string | null
+          symptoms_duration?: string | null
+          urgency_level?: string | null
           user_id: string
+          vaccination_card_status?: string | null
+          vaccination_details?: string | null
         }
         Update: {
+          additional_observations?: string | null
           birth_weight?: string | null
           child_age?: string
           child_name?: string
           child_sex?: string
           complaint_details?: string | null
+          consanguinity_degree?: string | null
+          consultation_reason?: string | null
+          current_illness_history?: string | null
+          current_medications?: string | null
+          delivery_complications?: string | null
           delivery_type?: string | null
+          development_observations?: string | null
+          development_perception?: string | null
+          family_medical_history?: string | null
+          first_steps_age?: string | null
+          first_words_age?: string | null
+          gestational_age?: string | null
+          has_been_hospitalized?: boolean | null
+          has_had_surgeries?: boolean | null
           health_history?: string | null
+          hospitalization_details?: string | null
           id?: string
+          known_allergies?: string | null
+          last_vaccination_date?: string | null
           main_complaint?: string
+          main_symptoms?: string[] | null
           medications?: string | null
+          parents_concerns?: string | null
+          parents_consanguinity?: boolean | null
+          past_medical_history?: string | null
           pregnancy_complications?: string | null
+          recent_diseases?: string | null
+          specific_questions?: string | null
+          sphincter_control_age?: string | null
           status?: string | null
           submitted_at?: string | null
+          surgery_details?: string | null
+          symptoms_duration?: string | null
+          urgency_level?: string | null
           user_id?: string
+          vaccination_card_status?: string | null
+          vaccination_details?: string | null
         }
         Relationships: []
       }
