@@ -32,6 +32,36 @@ interface QuestionnaireData {
   pregnancy_complications: string | null;
   submitted_at: string;
   status: string;
+  // Novos campos da expansão
+  consultation_reason: string | null;
+  main_symptoms: string[] | null;
+  symptoms_duration: string | null;
+  current_illness_history: string | null;
+  urgency_level: string | null;
+  current_medications: string | null;
+  recent_diseases: string | null;
+  past_medical_history: string | null;
+  known_allergies: string | null;
+  has_been_hospitalized: boolean | null;
+  hospitalization_details: string | null;
+  has_had_surgeries: boolean | null;
+  surgery_details: string | null;
+  first_words_age: string | null;
+  first_steps_age: string | null;
+  sphincter_control_age: string | null;
+  development_perception: string | null;
+  development_observations: string | null;
+  gestational_age: string | null;
+  delivery_complications: string | null;
+  vaccination_card_status: string | null;
+  vaccination_details: string | null;
+  last_vaccination_date: string | null;
+  family_medical_history: string | null;
+  parents_consanguinity: boolean | null;
+  consanguinity_degree: string | null;
+  parents_concerns: string | null;
+  specific_questions: string | null;
+  additional_observations: string | null;
 }
 
 export default function PatientDetails() {
@@ -200,9 +230,10 @@ export default function PatientDetails() {
                 {questionnaires.map((q, index) => (
                   <div 
                     key={q.id} 
-                    className="p-6 border-2 border-rosa-bebe/20 rounded-lg space-y-4"
+                    className="p-6 border-2 border-rosa-bebe/20 rounded-lg space-y-6"
                   >
-                    <div className="flex justify-between items-start">
+                    {/* Cabeçalho */}
+                    <div className="flex justify-between items-start pb-4 border-b">
                       <div>
                         <h3 className="text-xl font-bold">Questionário #{questionnaires.length - index}</h3>
                         <p className="text-sm text-muted-foreground">
@@ -219,65 +250,293 @@ export default function PatientDetails() {
                       </span>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Nome da Criança</p>
-                        <p className="font-semibold">{q.child_name}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Idade</p>
-                        <p className="font-semibold">{q.child_age}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Sexo</p>
-                        <p className="font-semibold capitalize">{q.child_sex}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Queixa Principal</p>
-                        <p className="font-semibold capitalize">{q.main_complaint}</p>
+                    {/* ETAPA 1: Informações Pessoais */}
+                    <div className="space-y-3">
+                      <h4 className="font-bold text-primary text-lg">📋 Informações Pessoais</h4>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Nome da Criança</p>
+                          <p className="font-semibold">{q.child_name}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Idade</p>
+                          <p className="font-semibold">{q.child_age}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Sexo</p>
+                          <p className="font-semibold capitalize">{q.child_sex}</p>
+                        </div>
                       </div>
                     </div>
 
-                    {q.complaint_details && (
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Detalhes da Queixa</p>
-                        <p className="mt-1">{q.complaint_details}</p>
-                      </div>
-                    )}
-
-                    {q.health_history && (
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Histórico de Saúde</p>
-                        <p className="mt-1 capitalize">{q.health_history}</p>
-                      </div>
-                    )}
-
-                    {q.medications && (
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Medicamentos em Uso</p>
-                        <p className="mt-1">{q.medications}</p>
-                      </div>
-                    )}
-
-                    <div className="grid md:grid-cols-3 gap-4 pt-4 border-t">
-                      {q.birth_weight && (
+                    {/* ETAPA 2: Motivo da Consulta */}
+                    <div className="space-y-3 pt-4 border-t">
+                      <h4 className="font-bold text-primary text-lg">🩺 Motivo da Consulta</h4>
+                      <div className="space-y-4">
+                        {q.consultation_reason && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Motivo Principal</p>
+                            <p className="font-semibold capitalize">{q.consultation_reason}</p>
+                          </div>
+                        )}
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">Peso ao Nascer</p>
-                          <p className="font-semibold">{q.birth_weight}</p>
+                          <p className="text-sm font-medium text-muted-foreground">Queixa Principal</p>
+                          <p className="font-semibold capitalize">{q.main_complaint}</p>
                         </div>
-                      )}
-                      {q.delivery_type && (
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground">Tipo de Parto</p>
-                          <p className="font-semibold capitalize">{q.delivery_type}</p>
-                        </div>
-                      )}
+                        {q.main_symptoms && q.main_symptoms.length > 0 && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Sintomas Principais</p>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {q.main_symptoms.map((symptom, i) => (
+                                <span key={i} className="px-3 py-1 bg-rosa-bebe/20 text-rosa-bebe rounded-full text-sm">
+                                  {symptom}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {q.symptoms_duration && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Duração dos Sintomas</p>
+                            <p className="font-semibold">{q.symptoms_duration}</p>
+                          </div>
+                        )}
+                        {q.current_illness_history && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">História da Moléstia Atual</p>
+                            <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.current_illness_history}</p>
+                          </div>
+                        )}
+                        {q.urgency_level && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Nível de Urgência</p>
+                            <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                              q.urgency_level === 'alta' ? 'bg-destructive/20 text-destructive' :
+                              q.urgency_level === 'média' ? 'bg-warning/20 text-warning' :
+                              'bg-success/20 text-success'
+                            }`}>
+                              {q.urgency_level.charAt(0).toUpperCase() + q.urgency_level.slice(1)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
-                    {q.pregnancy_complications && (
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Complicações na Gestação</p>
-                        <p className="mt-1">{q.pregnancy_complications}</p>
+                    {/* ETAPA 3: Histórico Médico */}
+                    <div className="space-y-3 pt-4 border-t">
+                      <h4 className="font-bold text-primary text-lg">💊 Histórico Médico</h4>
+                      <div className="space-y-4">
+                        {q.current_medications && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Medicamentos em Uso</p>
+                            <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.current_medications}</p>
+                          </div>
+                        )}
+                        {q.recent_diseases && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Doenças Recentes (últimos 6 meses)</p>
+                            <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.recent_diseases}</p>
+                          </div>
+                        )}
+                        {q.past_medical_history && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">História Patológica Pregressa</p>
+                            <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.past_medical_history}</p>
+                          </div>
+                        )}
+                        {q.known_allergies && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Alergias Conhecidas</p>
+                            <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.known_allergies}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* ETAPA 4: Hospitalizações e Cirurgias */}
+                    {(q.has_been_hospitalized || q.has_had_surgeries) && (
+                      <div className="space-y-3 pt-4 border-t">
+                        <h4 className="font-bold text-primary text-lg">🏥 Hospitalizações e Cirurgias</h4>
+                        <div className="space-y-4">
+                          {q.has_been_hospitalized && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Já foi hospitalizado(a)</p>
+                              <p className="font-semibold">Sim</p>
+                              {q.hospitalization_details && (
+                                <p className="mt-2 bg-muted/50 p-3 rounded-lg">{q.hospitalization_details}</p>
+                              )}
+                            </div>
+                          )}
+                          {q.has_had_surgeries && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Já foi submetido(a) a cirurgias</p>
+                              <p className="font-semibold">Sim</p>
+                              {q.surgery_details && (
+                                <p className="mt-2 bg-muted/50 p-3 rounded-lg">{q.surgery_details}</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ETAPA 5: Desenvolvimento Infantil */}
+                    {(q.first_words_age || q.first_steps_age || q.sphincter_control_age || q.development_observations) && (
+                      <div className="space-y-3 pt-4 border-t">
+                        <h4 className="font-bold text-primary text-lg">👶 Desenvolvimento Infantil</h4>
+                        <div className="space-y-4">
+                          <div className="grid md:grid-cols-3 gap-4">
+                            {q.first_words_age && (
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Primeiras Palavras</p>
+                                <p className="font-semibold">{q.first_words_age}</p>
+                              </div>
+                            )}
+                            {q.first_steps_age && (
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Primeiros Passos</p>
+                                <p className="font-semibold">{q.first_steps_age}</p>
+                              </div>
+                            )}
+                            {q.sphincter_control_age && (
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Controle dos Esfíncteres</p>
+                                <p className="font-semibold">{q.sphincter_control_age}</p>
+                              </div>
+                            )}
+                          </div>
+                          {q.development_perception && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Percepção dos Pais</p>
+                              <p className="font-semibold capitalize">{q.development_perception}</p>
+                            </div>
+                          )}
+                          {q.development_observations && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Observações sobre Desenvolvimento</p>
+                              <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.development_observations}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ETAPA 6: Dados do Nascimento */}
+                    {(q.birth_weight || q.gestational_age || q.delivery_type || q.pregnancy_complications || q.delivery_complications) && (
+                      <div className="space-y-3 pt-4 border-t">
+                        <h4 className="font-bold text-primary text-lg">🍼 Dados do Nascimento</h4>
+                        <div className="space-y-4">
+                          <div className="grid md:grid-cols-3 gap-4">
+                            {q.birth_weight && (
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Peso ao Nascer</p>
+                                <p className="font-semibold">{q.birth_weight}</p>
+                              </div>
+                            )}
+                            {q.gestational_age && (
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Idade Gestacional</p>
+                                <p className="font-semibold capitalize">{q.gestational_age}</p>
+                              </div>
+                            )}
+                            {q.delivery_type && (
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Tipo de Parto</p>
+                                <p className="font-semibold capitalize">{q.delivery_type}</p>
+                              </div>
+                            )}
+                          </div>
+                          {q.pregnancy_complications && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Complicações na Gestação</p>
+                              <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.pregnancy_complications}</p>
+                            </div>
+                          )}
+                          {q.delivery_complications && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Complicações no Parto</p>
+                              <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.delivery_complications}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ETAPA 7: Vacinação */}
+                    {(q.vaccination_card_status || q.vaccination_details || q.last_vaccination_date) && (
+                      <div className="space-y-3 pt-4 border-t">
+                        <h4 className="font-bold text-primary text-lg">💉 Vacinação</h4>
+                        <div className="space-y-4">
+                          {q.vaccination_card_status && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Status do Cartão de Vacinas</p>
+                              <p className="font-semibold capitalize">{q.vaccination_card_status}</p>
+                            </div>
+                          )}
+                          {q.last_vaccination_date && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Última Vacinação</p>
+                              <p className="font-semibold">{q.last_vaccination_date}</p>
+                            </div>
+                          )}
+                          {q.vaccination_details && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Detalhes da Vacinação</p>
+                              <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.vaccination_details}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ETAPA 8: Antecedentes Familiares */}
+                    {(q.family_medical_history || q.parents_consanguinity) && (
+                      <div className="space-y-3 pt-4 border-t">
+                        <h4 className="font-bold text-primary text-lg">👨‍👩‍👧‍👦 Antecedentes Familiares</h4>
+                        <div className="space-y-4">
+                          {q.family_medical_history && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Histórico Familiar de Doenças</p>
+                              <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.family_medical_history}</p>
+                            </div>
+                          )}
+                          {q.parents_consanguinity && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Consanguinidade dos Pais</p>
+                              <p className="font-semibold">Sim</p>
+                              {q.consanguinity_degree && (
+                                <p className="mt-2 bg-muted/50 p-3 rounded-lg">{q.consanguinity_degree}</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ETAPA 9: Informações Finais */}
+                    {(q.parents_concerns || q.specific_questions || q.additional_observations) && (
+                      <div className="space-y-3 pt-4 border-t">
+                        <h4 className="font-bold text-primary text-lg">📝 Informações Finais</h4>
+                        <div className="space-y-4">
+                          {q.parents_concerns && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Preocupações dos Pais</p>
+                              <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.parents_concerns}</p>
+                            </div>
+                          )}
+                          {q.specific_questions && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Questões Específicas</p>
+                              <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.specific_questions}</p>
+                            </div>
+                          )}
+                          {q.additional_observations && (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Observações Adicionais</p>
+                              <p className="mt-1 bg-muted/50 p-3 rounded-lg">{q.additional_observations}</p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
