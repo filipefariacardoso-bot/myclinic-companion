@@ -249,7 +249,15 @@ export default function Admin() {
                 onClick={() => navigate("/admin/location")}
               >
                 <span className="text-2xl">📍</span>
-                <span className="text-sm">Localização</span>
+                <span className="text-sm">Localização/Contato</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => navigate("/admin/gifts")}
+              >
+                <span className="text-2xl">🎁</span>
+                <span className="text-sm">Presentes e Mimos</span>
               </Button>
               <Button
                 variant="outline"
