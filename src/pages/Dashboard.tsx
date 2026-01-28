@@ -181,12 +181,31 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-amarelo-suave rounded-full flex items-center justify-center text-2xl">
                   📍
                 </div>
-                <CardTitle>Localização</CardTitle>
+                <CardTitle>Localização/Contato</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
               <p className="text-sm text-muted-foreground">
-                Como chegar na clínica
+                Como chegar e falar conosco
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-rosa-bebe/30 hover:border-rosa-bebe"
+            onClick={() => navigate("/gifts")}
+          >
+            <CardHeader className="bg-rosa-bebe/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-rosa-bebe rounded-full flex items-center justify-center text-2xl">
+                  🎁
+                </div>
+                <CardTitle>Presentes e Mimos</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground">
+                Nossas redes sociais
               </p>
             </CardContent>
           </Card>

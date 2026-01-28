@@ -18,6 +18,8 @@ import AdminPayment from "./pages/AdminPayment";
 import AdminLocation from "./pages/AdminLocation";
 import AdminAppointments from "./pages/AdminAppointments";
 import AdminSatisfaction from "./pages/AdminSatisfaction";
+import AdminGifts from "./pages/AdminGifts";
+import Gifts from "./pages/Gifts";
 import Partners from "./pages/Partners";
 import Payment from "./pages/Payment";
 import Location from "./pages/Location";
@@ -157,6 +159,16 @@ const App = () => (
             <Route path="/admin/satisfaction" element={
               <ProtectedRoute>
                 <AdminSatisfaction />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/gifts" element={
+              <ProtectedRoute>
+                <AdminGifts />
+              </ProtectedRoute>
+            } />
+            <Route path="/gifts" element={
+              <ProtectedRoute>
+                <Gifts />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
