@@ -81,11 +81,14 @@ export default function Satisfaction() {
       <main className="max-w-2xl mx-auto p-6">
         <Card className="border-2 border-laranja-suave/30">
           <CardHeader className="bg-laranja-suave/20">
-            <CardTitle>Como foi sua experiência?</CardTitle>
+            <CardTitle className="text-center">Como foi sua experiência?</CardTitle>
+            <p className="text-center text-muted-foreground text-sm mt-2">
+              💬 Deixe aqui sua avaliação, caso queira. Sua opinião é muito importante para nós!
+            </p>
           </CardHeader>
           <CardContent className="pt-6 space-y-6">
             <div className="space-y-3">
-              <label className="block text-sm font-medium">
+              <label className="block text-sm font-medium text-center">
                 Avalie nosso atendimento:
               </label>
               <div className="flex justify-center gap-2">
@@ -120,17 +123,17 @@ export default function Satisfaction() {
 
             <div className="space-y-3">
               <label className="block text-sm font-medium">
-                Comentários (opcional):
+                ✍️ Escreva sua opinião (opcional):
               </label>
               <Textarea
                 value={comments}
                 onChange={(e) => setComments(e.target.value)}
-                placeholder="Conte-nos mais sobre sua experiência..."
-                rows={5}
+                placeholder="Compartilhe conosco o que achou do atendimento, sugestões de melhoria, elogios ou críticas. Queremos ouvir você! 💚"
+                rows={6}
                 className="resize-none"
               />
-              <p className="text-xs text-muted-foreground">
-                Suas sugestões nos ajudam a melhorar nossos serviços
+              <p className="text-xs text-muted-foreground text-center">
+                Suas sugestões nos ajudam a melhorar nossos serviços cada vez mais!
               </p>
             </div>
 
