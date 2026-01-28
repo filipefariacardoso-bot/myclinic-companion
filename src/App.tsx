@@ -12,6 +12,12 @@ import PatientDetails from "./pages/PatientDetails";
 import Cartilhas from "./pages/Cartilhas";
 import ViewCartilha from "./pages/ViewCartilha";
 import AdminCartilhas from "./pages/AdminCartilhas";
+import AdminEbooks from "./pages/AdminEbooks";
+import AdminPartners from "./pages/AdminPartners";
+import AdminPayment from "./pages/AdminPayment";
+import AdminLocation from "./pages/AdminLocation";
+import AdminAppointments from "./pages/AdminAppointments";
+import AdminSatisfaction from "./pages/AdminSatisfaction";
 import Partners from "./pages/Partners";
 import Payment from "./pages/Payment";
 import Location from "./pages/Location";
@@ -121,6 +127,36 @@ const App = () => (
             <Route path="/admin/cartilhas" element={
               <ProtectedRoute>
                 <AdminCartilhas />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/ebooks" element={
+              <ProtectedRoute>
+                <AdminEbooks />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/partners" element={
+              <ProtectedRoute>
+                <AdminPartners />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/payment" element={
+              <ProtectedRoute>
+                <AdminPayment />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/location" element={
+              <ProtectedRoute>
+                <AdminLocation />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/appointments" element={
+              <ProtectedRoute>
+                <AdminAppointments />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/satisfaction" element={
+              <ProtectedRoute>
+                <AdminSatisfaction />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

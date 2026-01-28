@@ -1,0 +1,196 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, Calendar, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+interface Appointment {
+  id: string;
+  patient_name: string;
+  appointment_date: string;
+  appointment_type: string;
+  status: string | null;
+  notes: string | null;
+  user_id: string;
+}
+
+export default function AdminAppointments() {
+  const navigate = useNavigate();
+  const { isAdmin } = useAuth();
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate("/");
+      return;
+    }
+    loadAppointments();
+  }, [isAdmin, navigate]);
+
+  const loadAppointments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("appointments")
+        .select("*")
+        .order("appointment_date", { ascending: true });
+
+      if (error) throw error;
+      setAppointments(data || []);
+    } catch (error) {
+      console.error("Erro ao carregar consultas:", error);
+      toast.error("Erro ao carregar consultas");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateStatus = async (id: string, status: string) => {
+    try {
+      const { error } = await supabase
+        .from("appointments")
+        .update({ status })
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Status atualizado!");
+      loadAppointments();
+    } catch (error) {
+      console.error("Erro ao atualizar:", error);
+      toast.error("Erro ao atualizar");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta consulta?")) return;
+
+    try {
+      const { error } = await supabase.from("appointments").delete().eq("id", id);
+      if (error) throw error;
+      toast.success("Consulta excluída!");
+      loadAppointments();
+    } catch (error) {
+      console.error("Erro ao excluir:", error);
+      toast.error("Erro ao excluir");
+    }
+  };
+
+  const getStatusColor = (status: string | null) => {
+    switch (status) {
+      case "confirmed": return "bg-success/20 text-success";
+      case "cancelled": return "bg-destructive/20 text-destructive";
+      case "completed": return "bg-info/20 text-info";
+      default: return "bg-warning/20 text-warning";
+    }
+  };
+
+  const getStatusLabel = (status: string | null) => {
+    switch (status) {
+      case "confirmed": return "Confirmada";
+      case "cancelled": return "Cancelada";
+      case "completed": return "Realizada";
+      default: return "Pendente";
+    }
+  };
+
+  if (!isAdmin) return null;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-rosa-bebe/20 to-roxo-suave/20">
+      <header className="bg-gradient-to-r from-rosa-bebe to-roxo-suave p-6 rounded-b-3xl shadow-lg">
+        <div className="max-w-6xl mx-auto">
+          <Button
+            onClick={() => navigate("/admin")}
+            variant="outline"
+            size="sm"
+            className="mb-4 bg-white/90 hover:bg-white"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Voltar
+          </Button>
+          <div className="flex items-center gap-3">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl shadow-md">
+              📅
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Gerenciar Consultas</h1>
+              <p className="text-sm text-white/90">Visualize e gerencie agendamentos</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-6xl mx-auto p-6 space-y-6">
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-rosa-bebe to-roxo-suave rounded-full animate-pulse" />
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        ) : appointments.length === 0 ? (
+          <Card className="text-center py-12">
+            <CardContent>
+              <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-muted-foreground">Nenhuma consulta agendada</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4">
+            {appointments.map((appointment) => (
+              <Card key={appointment.id} className="border-2 border-rosa-bebe/20">
+                <CardContent className="pt-6">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold text-lg">{appointment.patient_name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(appointment.appointment_date), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                      </p>
+                      <span className="inline-block mt-1 px-2 py-1 bg-rosa-bebe/20 text-rosa-bebe text-xs rounded-full">
+                        {appointment.appointment_type}
+                      </span>
+                      {appointment.notes && (
+                        <p className="mt-2 text-sm text-muted-foreground">{appointment.notes}</p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
+                        {getStatusLabel(appointment.status)}
+                      </span>
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updateStatus(appointment.id, "confirmed")}
+                        >
+                          Confirmar
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updateStatus(appointment.id, "completed")}
+                        >
+                          Concluir
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDelete(appointment.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
