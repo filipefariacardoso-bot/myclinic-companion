@@ -222,7 +222,7 @@ export default function Admin() {
               <Button
                 variant="outline"
                 className="h-auto flex-col gap-2 py-4"
-                onClick={() => window.location.href = "/admin/ebooks"}
+                onClick={() => navigate("/admin/ebooks")}
               >
                 <span className="text-2xl">📖</span>
                 <span className="text-sm">E-books</span>
@@ -230,7 +230,7 @@ export default function Admin() {
               <Button
                 variant="outline"
                 className="h-auto flex-col gap-2 py-4"
-                onClick={() => window.location.href = "/admin/partners"}
+                onClick={() => navigate("/admin/partners")}
               >
                 <span className="text-2xl">🤝</span>
                 <span className="text-sm">Parceiros</span>
@@ -238,7 +238,7 @@ export default function Admin() {
               <Button
                 variant="outline"
                 className="h-auto flex-col gap-2 py-4"
-                onClick={() => window.location.href = "/admin/payment"}
+                onClick={() => navigate("/admin/payment")}
               >
                 <span className="text-2xl">💳</span>
                 <span className="text-sm">Pagamento</span>
@@ -246,7 +246,7 @@ export default function Admin() {
               <Button
                 variant="outline"
                 className="h-auto flex-col gap-2 py-4"
-                onClick={() => window.location.href = "/admin/location"}
+                onClick={() => navigate("/admin/location")}
               >
                 <span className="text-2xl">📍</span>
                 <span className="text-sm">Localização</span>
@@ -254,7 +254,7 @@ export default function Admin() {
               <Button
                 variant="outline"
                 className="h-auto flex-col gap-2 py-4"
-                onClick={() => window.location.href = "/admin/appointments"}
+                onClick={() => navigate("/admin/appointments")}
               >
                 <span className="text-2xl">📅</span>
                 <span className="text-sm">Consultas</span>
@@ -262,7 +262,7 @@ export default function Admin() {
               <Button
                 variant="outline"
                 className="h-auto flex-col gap-2 py-4"
-                onClick={() => window.location.href = "/admin/satisfaction"}
+                onClick={() => navigate("/admin/satisfaction")}
               >
                 <span className="text-2xl">⭐</span>
                 <span className="text-sm">Avaliações</span>
