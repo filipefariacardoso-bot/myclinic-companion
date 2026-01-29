@@ -266,6 +266,25 @@ export default function Dashboard() {
               </p>
             </CardContent>
           </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-azul-claro/30 hover:border-azul-claro"
+            onClick={() => navigate("/exam-results")}
+          >
+            <CardHeader className="bg-azul-claro/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-azul-claro rounded-full flex items-center justify-center text-2xl">
+                  🔬
+                </div>
+                <CardTitle>Resultado de Exames</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground">
+                Veja seus resultados de exames
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
       </main>
