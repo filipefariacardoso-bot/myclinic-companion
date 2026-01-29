@@ -30,13 +30,13 @@ export default function ExamResults() {
   const fetchResults = async () => {
     try {
       const { data, error } = await supabase
-        .from("exam_results")
+        .from("exam_results" as any)
         .select("*")
         .eq("user_id", user?.id)
         .order("exam_date", { ascending: false });
 
       if (error) throw error;
-      setResults(data || []);
+      setResults((data as unknown as ExamResult[]) || []);
     } catch (error) {
       console.error("Erro ao buscar resultados:", error);
     } finally {

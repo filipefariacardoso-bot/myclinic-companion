@@ -19,6 +19,7 @@ import AdminLocation from "./pages/AdminLocation";
 import AdminAppointments from "./pages/AdminAppointments";
 import AdminSatisfaction from "./pages/AdminSatisfaction";
 import AdminGifts from "./pages/AdminGifts";
+import AdminExamResults from "./pages/AdminExamResults";
 import Gifts from "./pages/Gifts";
 import Partners from "./pages/Partners";
 import Payment from "./pages/Payment";
@@ -27,6 +28,7 @@ import Appointments from "./pages/Appointments";
 import Ebooks from "./pages/Ebooks";
 import ViewEbook from "./pages/ViewEbook";
 import Satisfaction from "./pages/Satisfaction";
+import ExamResults from "./pages/ExamResults";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -166,9 +168,19 @@ const App = () => (
                 <AdminGifts />
               </ProtectedRoute>
             } />
+            <Route path="/admin/exam-results" element={
+              <ProtectedRoute>
+                <AdminExamResults />
+              </ProtectedRoute>
+            } />
             <Route path="/gifts" element={
               <ProtectedRoute>
                 <Gifts />
+              </ProtectedRoute>
+            } />
+            <Route path="/exam-results" element={
+              <ProtectedRoute>
+                <ExamResults />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

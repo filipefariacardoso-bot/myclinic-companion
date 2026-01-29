@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Trash2, FileText, Calendar, Upload } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, FileText, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -71,14 +71,14 @@ export default function AdminExamResults() {
   const fetchData = async () => {
     try {
       const [resultsRes, profilesRes] = await Promise.all([
-        supabase.from("exam_results").select("*").order("exam_date", { ascending: false }),
+        supabase.from("exam_results" as any).select("*").order("exam_date", { ascending: false }),
         supabase.from("profiles").select("id, full_name, email")
       ]);
 
       if (resultsRes.error) throw resultsRes.error;
       if (profilesRes.error) throw profilesRes.error;
 
-      setResults(resultsRes.data || []);
+      setResults((resultsRes.data as unknown as ExamResult[]) || []);
       setProfiles(profilesRes.data || []);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
@@ -140,7 +140,7 @@ export default function AdminExamResults() {
     }
 
     try {
-      const { error } = await supabase.from("exam_results").insert({
+      const { error } = await supabase.from("exam_results" as any).insert({
         user_id: formData.user_id,
         exam_name: formData.exam_name,
         exam_date: formData.exam_date,
@@ -180,7 +180,7 @@ export default function AdminExamResults() {
     if (!confirm("Tem certeza que deseja excluir este resultado?")) return;
 
     try {
-      const { error } = await supabase.from("exam_results").delete().eq("id", id);
+      const { error } = await supabase.from("exam_results" as any).delete().eq("id", id);
       if (error) throw error;
 
       toast({
@@ -305,7 +305,7 @@ export default function AdminExamResults() {
                       />
                     </div>
                     {formData.file_url && (
-                      <p className="text-sm text-green-600 mt-1">✓ Arquivo carregado</p>
+                      <p className="text-sm text-success mt-1">✓ Arquivo carregado</p>
                     )}
                   </div>
 
@@ -361,7 +361,7 @@ export default function AdminExamResults() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(result.id)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
