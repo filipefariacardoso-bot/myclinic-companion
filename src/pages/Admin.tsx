@@ -275,6 +275,14 @@ export default function Admin() {
                 <span className="text-2xl">⭐</span>
                 <span className="text-sm">Avaliações</span>
               </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => navigate("/admin/exam-results")}
+              >
+                <span className="text-2xl">🔬</span>
+                <span className="text-sm">Resultado de Exames</span>
+              </Button>
             </div>
           </CardContent>
         </Card>
