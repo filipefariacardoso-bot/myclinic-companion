@@ -74,6 +74,8 @@ export default function Questionnaire() {
     childName: "",
     childAge: "",
     childSex: "",
+    motherName: "",
+    fatherName: "",
     consultationReason: "",
     mainSymptoms: [] as string[],
     symptomsDuration: "",
