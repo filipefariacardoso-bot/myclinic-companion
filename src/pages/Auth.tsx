@@ -126,7 +126,7 @@ export default function Auth() {
               disabled={forgotLoading}
               className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
             >
-              {forgotLoading ? "Enviando..." : "Enviar link de recuperação"}
+              {forgotLoading ? "Gerando senha..." : "Gerar nova senha e enviar"}
             </Button>
             <div className="text-center">
               <button
