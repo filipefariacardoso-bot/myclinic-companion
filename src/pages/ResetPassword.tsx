@@ -35,8 +35,8 @@ export default function ResetPassword() {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password.length < 6) {
-      toast({ variant: "destructive", title: "Erro", description: "A senha deve ter pelo menos 6 caracteres." });
+    if (password.length < 8) {
+      toast({ variant: "destructive", title: "Senha muito curta", description: "A senha deve ter pelo menos 8 caracteres." });
       return;
     }
 
@@ -50,9 +50,17 @@ export default function ResetPassword() {
     setLoading(false);
 
     if (error) {
-      toast({ variant: "destructive", title: "Erro ao redefinir senha", description: error.message });
+      let description = error.message;
+      if (error.message.includes("same password")) {
+        description = "A nova senha não pode ser igual à senha atual.";
+      } else if (error.message.includes("weak") || error.message.includes("pwned") || error.message.includes("breached")) {
+        description = "Esta senha é muito comum ou fraca. Use letras, números e símbolos.";
+      } else if (error.message.includes("session") || error.message.includes("Auth")) {
+        description = "Sessão expirada. Solicite um novo link de recuperação de senha.";
+      }
+      toast({ variant: "destructive", title: "Erro ao redefinir senha", description });
     } else {
-      toast({ title: "Senha redefinida!", description: "Sua senha foi atualizada com sucesso." });
+      toast({ title: "Senha redefinida! ✅", description: "Sua senha foi atualizada com sucesso." });
       navigate("/");
     }
   };
