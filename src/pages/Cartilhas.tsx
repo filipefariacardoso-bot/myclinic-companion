@@ -48,7 +48,8 @@ export default function Cartilhas() {
 
   const handleDownloadFile = async (fileUrl: string, title: string) => {
     try {
-      const response = await fetch(fileUrl);
+      const signedUrl = await getSignedUrl(fileUrl, "cartilhas");
+      const response = await fetch(signedUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");

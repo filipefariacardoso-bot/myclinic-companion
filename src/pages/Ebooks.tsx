@@ -50,7 +50,8 @@ export default function Ebooks() {
 
   const handleDownload = async (url: string, title: string) => {
     try {
-      const response = await fetch(url);
+      const signedUrl = await getSignedUrl(url, "ebooks");
+      const response = await fetch(signedUrl);
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
