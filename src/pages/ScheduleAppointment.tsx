@@ -115,6 +115,25 @@ export default function ScheduleAppointment() {
       });
 
       if (error) throw error;
+
+      // Get client email for confirmation
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("id", user.id)
+        .single();
+
+      // Send notification email to clinic (and confirmation to client)
+      supabase.functions.invoke("send-appointment-notification", {
+        body: {
+          patientName,
+          appointmentDate: appointmentDate.toISOString(),
+          appointmentType,
+          notes: notes || null,
+          clientEmail: profile?.email || null,
+        },
+      }).catch((err) => console.error("Email notification error:", err));
+
       setSuccess(true);
     } catch (err) {
       console.error("Erro ao agendar:", err);
