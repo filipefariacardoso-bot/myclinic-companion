@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { LogOut, Users, FileText, Calendar, TrendingUp, Eye, BookOpen } from "lucide-react";
+import AdminNotificationBell from "@/components/AdminNotificationBell";
 import { format, startOfDay, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
