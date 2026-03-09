@@ -20,6 +20,7 @@ import AdminAppointments from "./pages/AdminAppointments";
 import AdminSatisfaction from "./pages/AdminSatisfaction";
 import AdminGifts from "./pages/AdminGifts";
 import AdminExamResults from "./pages/AdminExamResults";
+import AdminClinicSettings from "./pages/AdminClinicSettings";
 import Gifts from "./pages/Gifts";
 import Partners from "./pages/Partners";
 import Payment from "./pages/Payment";
