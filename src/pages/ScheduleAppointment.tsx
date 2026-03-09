@@ -116,29 +116,14 @@ export default function ScheduleAppointment() {
 
       if (error) throw error;
 
-      // Get client profile (email + phone) and clinic data for the notification
-      const [{ data: profile }, { data: clinicData }] = await Promise.all([
-        supabase.from("profiles").select("email, phone").eq("id", user.id).single(),
-        supabase.from("clinic_location").select("address, city, state, phone").eq("is_active", true).maybeSingle(),
-      ]);
-
-      const clinicAddress = clinicData
-        ? `${clinicData.address}, ${clinicData.city} - ${clinicData.state}`
-        : null;
-
-      // Send notification email to clinic (and confirmation to client)
-      supabase.functions.invoke("send-appointment-notification", {
-        body: {
-          patientName,
-          appointmentDate: appointmentDate.toISOString(),
-          appointmentType,
-          notes: notes || null,
-          clientEmail: profile?.email || null,
-          patientPhone: profile?.phone || null,
-          clinicAddress,
-          clinicPhone: clinicData?.phone || null,
-        },
-      }).catch((err) => console.error("Email notification error:", err));
+      // Save in-app notification for the admin
+      const dateLabel = format(appointmentDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+      await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Nova Solicitação de Consulta",
+        message: `Paciente: ${patientName} | ${appointmentType} | ${dateLabel}`,
+        type: "appointment",
+      });
 
       setSuccess(true);
     } catch (err) {

@@ -94,6 +94,16 @@ export default function AdminAppointments() {
         });
 
         if (error) throw error;
+
+        // Save in-app notification for admin
+        const dateLabel = format(new Date(formData.appointment_date), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+        await supabase.from("notifications").insert({
+          user_id: user.id,
+          title: "Nova Consulta Agendada",
+          message: `Paciente: ${formData.patient_name} | ${formData.appointment_type} | ${dateLabel}`,
+          type: "appointment",
+        });
+
         toast.success("Consulta agendada!");
       }
 
