@@ -192,6 +192,11 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
