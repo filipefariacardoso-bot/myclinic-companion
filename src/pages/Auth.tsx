@@ -101,20 +101,6 @@ export default function Auth() {
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border-2 border-azul-claro/30 focus:border-primary"
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
-          </div>
-
           {view === "signup" && (
             <div className="space-y-2">
               <Label htmlFor="phone">
@@ -123,7 +109,7 @@ export default function Auth() {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="(75) 99999-9999"
+                placeholder="(XX) XXXXX-XXXX"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="border-2 border-azul-claro/30 focus:border-primary"
@@ -137,6 +123,20 @@ export default function Auth() {
               )}
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border-2 border-azul-claro/30 focus:border-primary"
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email}</p>
+            )}
+          </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
