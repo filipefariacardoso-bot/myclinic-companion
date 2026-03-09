@@ -16,7 +16,7 @@ const loginSchema = z.object({
 
 const signupSchema = loginSchema.extend({
   fullName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  phone: z.string().min(10, "Telefone inválido (mínimo 10 dígitos)").regex(/^\(?\d{2}\)?[\s\-]?\d{4,5}[\s\-]?\d{4}$/, "Formato inválido. Ex: (75) 99999-9999"),
+  phone: z.string().min(1, "Telefone é obrigatório para receber confirmações de consulta").min(10, "Telefone inválido (mínimo 10 dígitos)").regex(/^\(?\d{2}\)?[\s\-]?\d{4,5}[\s\-]?\d{4}$/, "Formato inválido. Ex: (XX) XXXXX-XXXX"),
   confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
