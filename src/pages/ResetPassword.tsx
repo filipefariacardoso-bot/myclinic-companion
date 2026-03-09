@@ -10,25 +10,32 @@ import { useToast } from "@/hooks/use-toast";
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isRecovery, setIsRecovery] = useState(true);
+  const [sessionReady, setSessionReady] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if there's already an active session (event may have fired before mount)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setIsRecovery(true);
+    // onAuthStateChange MUST be set up before getSession()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
+        setSessionReady(true);
+        setChecking(false);
+      } else if (event === "SIGNED_OUT") {
+        setSessionReady(false);
+        setChecking(false);
       }
     });
 
-    // Also listen for the PASSWORD_RECOVERY event (fires if component mounts first)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
-        setIsRecovery(true);
+    // Check if there's already a valid session (e.g. token was processed before mount)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setSessionReady(true);
       }
+      setChecking(false);
     });
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -55,15 +62,26 @@ export default function ResetPassword() {
         description = "A nova senha não pode ser igual à senha atual.";
       } else if (error.message.includes("weak") || error.message.includes("pwned") || error.message.includes("breached")) {
         description = "Esta senha é muito comum ou fraca. Use letras, números e símbolos.";
-      } else if (error.message.includes("session") || error.message.includes("Auth")) {
+      } else if (error.message.includes("session") || error.message.includes("Auth") || error.message.includes("missing")) {
         description = "Sessão expirada. Solicite um novo link de recuperação de senha.";
       }
       toast({ variant: "destructive", title: "Erro ao redefinir senha", description });
     } else {
       toast({ title: "Senha redefinida! ✅", description: "Sua senha foi atualizada com sucesso." });
-      navigate("/");
+      await supabase.auth.signOut();
+      navigate("/auth");
     }
   };
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-azul-claro via-background to-rosa-bebe p-4">
+        <Card className="w-full max-w-md p-8 shadow-xl border-2 border-azul-claro/30 text-center">
+          <p className="text-muted-foreground">Verificando link de recuperação...</p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-azul-claro via-background to-rosa-bebe p-4">
@@ -76,7 +94,7 @@ export default function ResetPassword() {
           <p className="text-muted-foreground">Digite sua nova senha abaixo</p>
         </div>
 
-        {isRecovery ? (
+        {sessionReady ? (
           <form onSubmit={handleResetPassword} className="space-y-4">
             <div className="rounded-lg bg-muted px-4 py-3 text-sm text-muted-foreground">
               🔑 Use uma senha com <strong>pelo menos 8 caracteres</strong>, misturando letras e números. Evite senhas simples como "123456".
@@ -114,7 +132,7 @@ export default function ResetPassword() {
         ) : (
           <div className="text-center space-y-4">
             <p className="text-muted-foreground">
-              Aguardando link de recuperação... Verifique se você acessou esta página pelo link enviado ao seu e-mail.
+              Link inválido ou expirado. Solicite um novo link de recuperação de senha.
             </p>
             <Button
               variant="outline"
