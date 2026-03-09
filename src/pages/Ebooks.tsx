@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, Download, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getSignedUrl } from "@/lib/storage";
 import { toast } from "sonner";
 
 interface Ebook {
@@ -49,7 +50,8 @@ export default function Ebooks() {
 
   const handleDownload = async (url: string, title: string) => {
     try {
-      const response = await fetch(url);
+      const signedUrl = await getSignedUrl(url, "ebooks");
+      const response = await fetch(signedUrl);
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");

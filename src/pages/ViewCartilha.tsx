@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getSignedUrl } from "@/lib/storage";
 import DocumentViewer from "@/components/DocumentViewer";
 
 export default function ViewCartilha() {
@@ -22,7 +23,9 @@ export default function ViewCartilha() {
         .single();
 
       if (error) throw error;
-      setCartilha(data);
+
+      const signedUrl = await getSignedUrl(data.file_url, "cartilhas");
+      setCartilha({ ...data, file_url: signedUrl });
     } catch (error) {
       console.error("Erro ao carregar cartilha:", error);
       toast.error("Erro ao carregar cartilha");

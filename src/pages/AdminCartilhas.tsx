@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,7 @@ interface Cartilha {
 
 export default function AdminCartilhas() {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [cartilhas, setCartilhas] = useState<Cartilha[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -50,8 +52,14 @@ export default function AdminCartilhas() {
   });
 
   useEffect(() => {
+    if (!isAdmin) {
+      navigate("/");
+      return;
+    }
     loadCartilhas();
-  }, []);
+  }, [isAdmin, navigate]);
+
+  if (!isAdmin) return null;
 
   const loadCartilhas = async () => {
     try {
@@ -120,16 +128,11 @@ export default function AdminCartilhas() {
 
       if (uploadError) throw uploadError;
 
-      // Obter URL pública do arquivo
-      const { data: urlData } = supabase.storage
-        .from("cartilhas")
-        .getPublicUrl(filePath);
-
-      // Salvar metadados no banco
+      // Store the file path (bucket is private, signed URLs generated on access)
       const { error: insertError } = await supabase.from("cartilhas").insert({
         title: formData.title,
         description: formData.description || null,
-        file_url: urlData.publicUrl,
+        file_url: filePath,
         file_type: formData.file.type,
       });
 
@@ -256,7 +259,11 @@ export default function AdminCartilhas() {
                   )}
                   <div className="flex gap-2">
                     <Button
-                      onClick={() => window.open(cartilha.file_url, "_blank")}
+                      onClick={async () => {
+                        const { getSignedUrl } = await import("@/lib/storage");
+                        const url = await getSignedUrl(cartilha.file_url, "cartilhas");
+                        window.open(url, "_blank");
+                      }}
                       variant="outline"
                       size="sm"
                       className="flex-1"
