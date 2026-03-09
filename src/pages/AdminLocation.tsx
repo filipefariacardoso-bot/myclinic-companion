@@ -255,6 +255,11 @@ export default function AdminLocation() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
+                <Input
+                  placeholder="Instagram (@usuario)"
+                  value={formData.instagram}
+                  onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                />
                 <Textarea
                   placeholder="Horário de Funcionamento"
                   value={formData.opening_hours}
