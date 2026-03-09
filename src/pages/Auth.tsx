@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -15,6 +16,7 @@ const loginSchema = z.object({
 
 const signupSchema = loginSchema.extend({
   fullName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  phone: z.string().min(10, "Telefone inválido (mínimo 10 dígitos)").regex(/^\(?\d{2}\)?[\s\-]?\d{4,5}[\s\-]?\d{4}$/, "Formato inválido. Ex: (75) 99999-9999"),
   confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
@@ -28,6 +30,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<any>({});
   const { signIn, signUp } = useAuth();
@@ -46,9 +49,14 @@ export default function Auth() {
           navigate("/");
         }
       } else {
-        const validatedData = signupSchema.parse({ email, password, fullName, confirmPassword });
+        const validatedData = signupSchema.parse({ email, password, fullName, phone, confirmPassword });
         const { error } = await signUp(validatedData.email, validatedData.password, validatedData.fullName);
         if (!error) {
+          // Save phone to profile after signup
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await supabase.from("profiles").update({ phone: validatedData.phone }).eq("id", user.id);
+          }
           setView("login");
         }
       }
