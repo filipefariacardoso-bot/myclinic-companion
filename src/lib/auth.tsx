@@ -23,20 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set up auth state listener FIRST (before getSession)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        // Don't interfere with password recovery flow
-        if (event === "PASSWORD_RECOVERY") {
-          setSession(session);
-          setUser(session?.user ?? null);
-          setLoading(false);
-          return;
-        }
-
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           setTimeout(() => {
             checkAdminRole(session.user.id);
@@ -45,9 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setIsAdmin(false);
         }
 
-        if (event === "INITIAL_SESSION") {
-          setLoading(false);
-        }
+        // Mark loading as done after first event (INITIAL_SESSION, SIGNED_IN, PASSWORD_RECOVERY, etc.)
+        setLoading(false);
       }
     );
 
