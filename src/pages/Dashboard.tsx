@@ -70,15 +70,26 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground">Olá, {user?.email}</p>
             </div>
           </div>
-          <Button 
-            onClick={handleSignOut} 
-            variant="outline" 
-            size="sm"
-            className="bg-white/90 hover:bg-white"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => navigate("/profile")}
+              variant="outline"
+              size="sm"
+              className="bg-white/90 hover:bg-white"
+            >
+              <User className="w-4 h-4 mr-2" />
+              Perfil
+            </Button>
+            <Button 
+              onClick={handleSignOut} 
+              variant="outline" 
+              size="sm"
+              className="bg-white/90 hover:bg-white"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 
