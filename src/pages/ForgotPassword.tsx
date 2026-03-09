@@ -45,9 +45,9 @@ export default function ForgotPassword() {
 
         {sent ? (
           <div className="text-center space-y-4">
-            <div className="rounded-lg bg-green-50 border border-green-200 p-4">
-              <p className="text-green-800 font-medium">✅ E-mail enviado!</p>
-              <p className="text-green-700 text-sm mt-1">
+            <div className="rounded-lg bg-muted border border-border p-4">
+              <p className="text-foreground font-medium">✅ E-mail enviado!</p>
+              <p className="text-muted-foreground text-sm mt-1">
                 Verifique sua caixa de entrada e clique no link para redefinir sua senha.
               </p>
             </div>
