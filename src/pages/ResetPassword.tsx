@@ -35,8 +35,8 @@ export default function ResetPassword() {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password.length < 6) {
-      toast({ variant: "destructive", title: "Erro", description: "A senha deve ter pelo menos 6 caracteres." });
+    if (password.length < 8) {
+      toast({ variant: "destructive", title: "Senha muito curta", description: "A senha deve ter pelo menos 8 caracteres." });
       return;
     }
 
@@ -50,9 +50,17 @@ export default function ResetPassword() {
     setLoading(false);
 
     if (error) {
-      toast({ variant: "destructive", title: "Erro ao redefinir senha", description: error.message });
+      let description = error.message;
+      if (error.message.includes("same password")) {
+        description = "A nova senha não pode ser igual à senha atual.";
+      } else if (error.message.includes("weak") || error.message.includes("pwned") || error.message.includes("breached")) {
+        description = "Esta senha é muito comum ou fraca. Use letras, números e símbolos.";
+      } else if (error.message.includes("session") || error.message.includes("Auth")) {
+        description = "Sessão expirada. Solicite um novo link de recuperação de senha.";
+      }
+      toast({ variant: "destructive", title: "Erro ao redefinir senha", description });
     } else {
-      toast({ title: "Senha redefinida!", description: "Sua senha foi atualizada com sucesso." });
+      toast({ title: "Senha redefinida! ✅", description: "Sua senha foi atualizada com sucesso." });
       navigate("/");
     }
   };
@@ -70,6 +78,9 @@ export default function ResetPassword() {
 
         {isRecovery ? (
           <form onSubmit={handleResetPassword} className="space-y-4">
+            <div className="rounded-lg bg-muted px-4 py-3 text-sm text-muted-foreground">
+              🔑 Use uma senha com <strong>pelo menos 8 caracteres</strong>, misturando letras e números. Evite senhas simples como "123456".
+            </div>
             <div className="space-y-2">
               <Label htmlFor="password">Nova Senha</Label>
               <Input
@@ -77,7 +88,7 @@ export default function ResetPassword() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres"
                 className="border-2 border-azul-claro/30 focus:border-primary"
               />
             </div>
