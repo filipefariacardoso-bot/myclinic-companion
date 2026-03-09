@@ -131,6 +131,7 @@ export default function AdminLocation() {
       zip_code: location.zip_code || "",
       phone: location.phone || "",
       email: location.email || "",
+      instagram: location.instagram || "",
       opening_hours: location.opening_hours || "",
       map_url: location.map_url || "",
       is_active: location.is_active,
