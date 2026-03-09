@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,7 @@ interface Cartilha {
 
 export default function AdminCartilhas() {
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [cartilhas, setCartilhas] = useState<Cartilha[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -50,8 +52,14 @@ export default function AdminCartilhas() {
   });
 
   useEffect(() => {
+    if (!isAdmin) {
+      navigate("/");
+      return;
+    }
     loadCartilhas();
-  }, []);
+  }, [isAdmin, navigate]);
+
+  if (!isAdmin) return null;
 
   const loadCartilhas = async () => {
     try {
