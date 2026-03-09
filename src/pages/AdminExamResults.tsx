@@ -78,7 +78,19 @@ export default function AdminExamResults() {
       if (resultsRes.error) throw resultsRes.error;
       if (profilesRes.error) throw profilesRes.error;
 
-      setResults((resultsRes.data as unknown as ExamResult[]) || []);
+      // Generate signed URLs (1 hour) for all files — never expose raw storage paths
+      const rawResults = (resultsRes.data as unknown as ExamResult[]) || [];
+      const resultsWithUrls = await Promise.all(
+        rawResults.map(async (result) => {
+          if (!result.file_url) return result;
+          const { data: signedData } = await supabase.storage
+            .from("exam-results")
+            .createSignedUrl(result.file_url, 3600);
+          return { ...result, file_url: signedData?.signedUrl ?? null };
+        })
+      );
+
+      setResults(resultsWithUrls);
       setProfiles(profilesRes.data || []);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
