@@ -184,6 +184,11 @@ const App = () => (
                 <AdminClinicSettings />
               </ProtectedRoute>
             } />
+            <Route path="/admin/questionarios" element={
+              <ProtectedRoute>
+                <AdminQuestionarios />
+              </ProtectedRoute>
+            } />
             <Route path="/gifts" element={
               <ProtectedRoute>
                 <Gifts />
