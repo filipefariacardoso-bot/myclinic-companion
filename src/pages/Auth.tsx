@@ -108,7 +108,7 @@ export default function Auth() {
         {view === "forgot" ? (
           <form onSubmit={handleForgotPassword} className="space-y-4">
             <p className="text-sm text-muted-foreground text-center">
-              Digite seu e-mail cadastrado e enviaremos um link para você redefinir sua senha.
+              Digite seu e-mail cadastrado e geraremos uma nova senha e enviaremos para você.
             </p>
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
