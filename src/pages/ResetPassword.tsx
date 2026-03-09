@@ -18,10 +18,14 @@ export default function ResetPassword() {
 
   useEffect(() => {
     let cancelled = false;
-    let intervalId: ReturnType<typeof setInterval> | null = null;
 
+    // Handle PKCE flow: Supabase sends ?code= in the URL
+    const searchParams = new URLSearchParams(window.location.search);
+    const code = searchParams.get("code");
+
+    // Handle implicit flow: Supabase sends #access_token in hash
     const hash = window.location.hash;
-    const isRecoveryLink =
+    const hasHashToken =
       hash.includes("type=recovery") ||
       hash.includes("access_token") ||
       hash.includes("refresh_token");
@@ -30,10 +34,9 @@ export default function ResetPassword() {
       if (cancelled) return;
       setSessionReady(hasSession);
       setChecking(false);
-      if (intervalId) clearInterval(intervalId);
     };
 
-    // Primary: listen to auth state changes
+    // Listen for auth state changes (handles both flows)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (cancelled) return;
       if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
@@ -43,31 +46,47 @@ export default function ResetPassword() {
       }
     });
 
-    // Secondary: poll getSession() for up to 5 seconds when recovery hash is present
-    // This handles the case where the SIGNED_IN event fires before this component mounts
-    if (isRecoveryLink) {
-      let attempts = 0;
-      intervalId = setInterval(async () => {
-        attempts++;
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          resolveSession(true);
-        } else if (attempts >= 10) {
-          // 10 × 500ms = 5s timeout
-          resolveSession(false);
+    const checkSession = async () => {
+      // If PKCE code present, exchange it for a session
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!cancelled) {
+          if (error) {
+            resolveSession(false);
+          } else {
+            resolveSession(true);
+          }
         }
-      }, 500);
-    } else {
-      // No recovery hash — just check once
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        resolveSession(!!session);
-      });
-    }
+        return;
+      }
+
+      // Hash-based: poll for session
+      if (hasHashToken) {
+        let attempts = 0;
+        const intervalId = setInterval(async () => {
+          attempts++;
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            clearInterval(intervalId);
+            resolveSession(true);
+          } else if (attempts >= 10) {
+            clearInterval(intervalId);
+            resolveSession(false);
+          }
+        }, 500);
+        return;
+      }
+
+      // No recovery indicators at all
+      const { data: { session } } = await supabase.auth.getSession();
+      resolveSession(!!session);
+    };
+
+    checkSession();
 
     return () => {
       cancelled = true;
       subscription.unsubscribe();
-      if (intervalId) clearInterval(intervalId);
     };
   }, []);
 
@@ -129,7 +148,7 @@ export default function ResetPassword() {
         {sessionReady ? (
           <form onSubmit={handleResetPassword} className="space-y-4">
             <div className="rounded-lg bg-muted px-4 py-3 text-sm text-muted-foreground">
-              🔑 Use uma senha com <strong>pelo menos 8 caracteres</strong>, misturando letras e números. Evite senhas simples como "123456".
+              🔑 Use uma senha com <strong>pelo menos 8 caracteres</strong>, misturando letras e números.
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Nova Senha</Label>
