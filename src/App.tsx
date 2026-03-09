@@ -31,6 +31,7 @@ import Satisfaction from "./pages/Satisfaction";
 import ExamResults from "./pages/ExamResults";
 import ScheduleAppointment from "./pages/ScheduleAppointment";
 import NotFound from "./pages/NotFound";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
