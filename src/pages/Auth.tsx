@@ -74,15 +74,23 @@ export default function Auth() {
       return;
     }
     setForgotLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `https://myclinic-companion.lovable.app/reset-password`,
-    });
-    setForgotLoading(false);
-    if (error) {
-      toast({ variant: "destructive", title: "Erro", description: error.message });
-    } else {
-      toast({ title: "E-mail enviado!", description: "Verifique sua caixa de entrada para redefinir sua senha." });
+    try {
+      const res = await fetch(
+        `https://qqrvjqteqltygmkzkvhs.supabase.co/functions/v1/send-temp-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnZqcXRlcWx0eWdta3prdmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNTIwMDMsImV4cCI6MjA3OTcyODAwM30.T2575WNJhCy0wbGH60JqXLsgFotLPJVl3Vr3piZbKlM" },
+          body: JSON.stringify({ email }),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erro desconhecido");
+      toast({ title: "✅ Senha enviada!", description: "Uma nova senha foi enviada para o seu e-mail." });
       setView("login");
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Erro", description: err.message });
+    } finally {
+      setForgotLoading(false);
     }
   };
 
