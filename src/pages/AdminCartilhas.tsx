@@ -259,7 +259,11 @@ export default function AdminCartilhas() {
                   )}
                   <div className="flex gap-2">
                     <Button
-                      onClick={() => window.open(cartilha.file_url, "_blank")}
+                      onClick={async () => {
+                        const { getSignedUrl } = await import("@/lib/storage");
+                        const url = await getSignedUrl(cartilha.file_url, "cartilhas");
+                        window.open(url, "_blank");
+                      }}
                       variant="outline"
                       size="sm"
                       className="flex-1"
