@@ -212,6 +212,25 @@ export default function Dashboard() {
 
           <Card 
             className="cursor-pointer hover:shadow-lg transition-all border-2 border-azul-claro/30 hover:border-azul-claro"
+            onClick={() => navigate("/schedule")}
+          >
+            <CardHeader className="bg-azul-claro/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-azul-claro rounded-full flex items-center justify-center text-2xl">
+                  📆
+                </div>
+                <CardTitle>Agendar Consulta</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground">
+                Escolha data e horário com a Dra. Michelle Caires
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-azul-claro/30 hover:border-azul-claro"
             onClick={() => navigate("/appointments")}
           >
             <CardHeader className="bg-azul-claro/20">
@@ -219,7 +238,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-azul-claro rounded-full flex items-center justify-center text-2xl">
                   📅
                 </div>
-                <CardTitle>Consultas</CardTitle>
+                <CardTitle>Minhas Consultas</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
