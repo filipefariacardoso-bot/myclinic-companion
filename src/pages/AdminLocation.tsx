@@ -321,6 +321,7 @@ export default function AdminLocation() {
                       <div className="mt-2 text-sm text-muted-foreground space-y-1">
                         {location.phone && <p>📞 {location.phone}</p>}
                         {location.email && <p>✉️ {location.email}</p>}
+                        {location.instagram && <p>📸 {location.instagram}</p>}
                         {location.opening_hours && <p>🕐 {location.opening_hours}</p>}
                       </div>
                     </div>
