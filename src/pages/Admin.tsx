@@ -140,15 +140,18 @@ export default function Admin() {
               <p className="text-sm text-white/90">CuidarBem Pediatria</p>
             </div>
           </div>
-          <Button 
-            onClick={handleSignOut} 
-            variant="outline" 
-            size="sm"
-            className="bg-white/90 hover:bg-white"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-3">
+            <AdminNotificationBell />
+            <Button 
+              onClick={handleSignOut} 
+              variant="outline" 
+              size="sm"
+              className="bg-white/90 hover:bg-white"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 
