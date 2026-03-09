@@ -54,7 +54,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: 'Clínica CuidarBem <onboarding@resend.dev>',
-        to: ['michellecaires2@hotmail.com'],
+        to: ['filipefariacardoso@gmail.com'],
         subject: `📅 Novo Agendamento: ${patientName}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
