@@ -1,0 +1,1 @@
+ALTER TABLE public.clinic_location ADD COLUMN instagram text;
