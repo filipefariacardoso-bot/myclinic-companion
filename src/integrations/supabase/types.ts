@@ -220,6 +220,7 @@ export type Database = {
           development_observations: string | null
           development_perception: string | null
           family_medical_history: string | null
+          father_name: string | null
           first_steps_age: string | null
           first_words_age: string | null
           gestational_age: string | null
@@ -233,6 +234,7 @@ export type Database = {
           main_complaint: string
           main_symptoms: string[] | null
           medications: string | null
+          mother_name: string | null
           parents_concerns: string | null
           parents_consanguinity: boolean | null
           past_medical_history: string | null
@@ -265,6 +267,7 @@ export type Database = {
           development_observations?: string | null
           development_perception?: string | null
           family_medical_history?: string | null
+          father_name?: string | null
           first_steps_age?: string | null
           first_words_age?: string | null
           gestational_age?: string | null
@@ -278,6 +281,7 @@ export type Database = {
           main_complaint: string
           main_symptoms?: string[] | null
           medications?: string | null
+          mother_name?: string | null
           parents_concerns?: string | null
           parents_consanguinity?: boolean | null
           past_medical_history?: string | null
@@ -310,6 +314,7 @@ export type Database = {
           development_observations?: string | null
           development_perception?: string | null
           family_medical_history?: string | null
+          father_name?: string | null
           first_steps_age?: string | null
           first_words_age?: string | null
           gestational_age?: string | null
@@ -323,6 +328,7 @@ export type Database = {
           main_complaint?: string
           main_symptoms?: string[] | null
           medications?: string | null
+          mother_name?: string | null
           parents_concerns?: string | null
           parents_consanguinity?: boolean | null
           past_medical_history?: string | null
@@ -479,6 +485,54 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      questionnaire_fields: {
+        Row: {
+          created_at: string
+          field_key: string
+          field_label: string
+          field_options: Json | null
+          field_order: number
+          field_type: string
+          id: string
+          is_active: boolean
+          is_required: boolean
+          placeholder: string | null
+          section_name: string
+          section_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          field_key: string
+          field_label: string
+          field_options?: Json | null
+          field_order?: number
+          field_type?: string
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          placeholder?: string | null
+          section_name: string
+          section_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          field_key?: string
+          field_label?: string
+          field_options?: Json | null
+          field_order?: number
+          field_type?: string
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          placeholder?: string | null
+          section_name?: string
+          section_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
