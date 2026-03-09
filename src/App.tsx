@@ -21,6 +21,7 @@ import AdminSatisfaction from "./pages/AdminSatisfaction";
 import AdminGifts from "./pages/AdminGifts";
 import AdminExamResults from "./pages/AdminExamResults";
 import AdminClinicSettings from "./pages/AdminClinicSettings";
+import AdminQuestionarios from "./pages/AdminQuestionarios";
 import Gifts from "./pages/Gifts";
 import Partners from "./pages/Partners";
 import Payment from "./pages/Payment";
@@ -181,6 +182,11 @@ const App = () => (
             <Route path="/admin/clinic-settings" element={
               <ProtectedRoute>
                 <AdminClinicSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/questionarios" element={
+              <ProtectedRoute>
+                <AdminQuestionarios />
               </ProtectedRoute>
             } />
             <Route path="/gifts" element={
