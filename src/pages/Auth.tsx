@@ -22,14 +22,18 @@ const signupSchema = loginSchema.extend({
   path: ["confirmPassword"]
 });
 
+type View = "login" | "signup" | "forgot";
+
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [view, setView] = useState<View>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<any>({});
+  const [forgotLoading, setForgotLoading] = useState(false);
   const { signIn, signUp } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +41,7 @@ export default function Auth() {
     setErrors({});
 
     try {
-      if (isLogin) {
+      if (view === "login") {
         const validatedData = loginSchema.parse({ email, password });
         const { error } = await signIn(validatedData.email, validatedData.password);
         if (!error) {
@@ -47,7 +51,7 @@ export default function Auth() {
         const validatedData = signupSchema.parse({ email, password, fullName, confirmPassword });
         const { error } = await signUp(validatedData.email, validatedData.password, validatedData.fullName);
         if (!error) {
-          setIsLogin(true);
+          setView("login");
         }
       }
     } catch (error) {
@@ -60,6 +64,25 @@ export default function Auth() {
         });
         setErrors(fieldErrors);
       }
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast({ variant: "destructive", title: "Atenção", description: "Digite seu e-mail para recuperar a senha." });
+      return;
+    }
+    setForgotLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setForgotLoading(false);
+    if (error) {
+      toast({ variant: "destructive", title: "Erro", description: error.message });
+    } else {
+      toast({ title: "E-mail enviado!", description: "Verifique sua caixa de entrada para redefinir sua senha." });
+      setView("login");
     }
   };
 
