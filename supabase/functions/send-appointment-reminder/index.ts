@@ -12,6 +12,18 @@ serve(async (req) => {
   }
 
   try {
+    // Protect this function with a shared secret so only the cron job can trigger it
+    const CRON_SECRET = Deno.env.get('CRON_SECRET');
+    if (CRON_SECRET) {
+      const providedSecret = req.headers.get('x-cron-secret');
+      if (providedSecret !== CRON_SECRET) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
@@ -78,6 +90,17 @@ serve(async (req) => {
         timeZone: 'America/Sao_Paulo',
       });
 
+      // Sanitize values to prevent HTML injection
+      const safeName = (profile.full_name || 'responsável').replace(/[<>&"']/g, (c) => ({
+        '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;'
+      }[c] || c));
+      const safePatientName = (appointment.patient_name || '').replace(/[<>&"']/g, (c) => ({
+        '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;'
+      }[c] || c));
+      const safeAppointmentType = (appointment.appointment_type || '').replace(/[<>&"']/g, (c) => ({
+        '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;'
+      }[c] || c));
+
       const emailRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -96,7 +119,7 @@ serve(async (req) => {
                 <p style="color: white; margin: 8px 0 0; opacity: 0.9;">Sua consulta é amanhã!</p>
               </div>
               <div style="background: white; padding: 30px; border-radius: 0 0 16px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <p style="color: #374151; font-size: 16px; margin-top: 0;">Olá, <strong>${profile.full_name || 'responsável'}</strong>! 😊</p>
+                <p style="color: #374151; font-size: 16px; margin-top: 0;">Olá, <strong>${safeName}</strong>! 😊</p>
                 <p style="color: #374151; font-size: 15px;">Este é um lembrete que você tem uma consulta <strong>amanhã</strong>. Confira os detalhes:</p>
                 
                 <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
@@ -106,7 +129,7 @@ serve(async (req) => {
                   </tr>
                   <tr style="border-bottom: 1px solid #e5e7eb;">
                     <td style="padding: 12px 0; color: #6b7280; font-size: 14px;">👤 Paciente</td>
-                    <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${appointment.patient_name}</td>
+                    <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${safePatientName}</td>
                   </tr>
                   <tr style="border-bottom: 1px solid #e5e7eb;">
                     <td style="padding: 12px 0; color: #6b7280; font-size: 14px;">📆 Data</td>
@@ -118,7 +141,7 @@ serve(async (req) => {
                   </tr>
                   <tr>
                     <td style="padding: 12px 0; color: #6b7280; font-size: 14px;">🩺 Tipo</td>
-                    <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${appointment.appointment_type}</td>
+                    <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${safeAppointmentType}</td>
                   </tr>
                 </table>
 
@@ -141,10 +164,10 @@ serve(async (req) => {
 
       if (emailRes.ok) {
         sentCount++;
-        console.log(`Reminder sent to ${profile.email} for appointment ${appointment.id}`);
+        console.log(`Reminder sent to appointment ${appointment.id}`);
       } else {
         const err = await emailRes.text();
-        console.error(`Failed to send reminder for ${appointment.id}:`, err);
+        console.error(`Failed to send reminder for appointment ${appointment.id}:`, err);
       }
     }
 
@@ -152,8 +175,9 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    // Log details server-side only; return a generic message to the caller
     console.error('Error in reminder function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
