@@ -17,9 +17,18 @@ export default function ResetPassword() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // onAuthStateChange MUST be set up before getSession()
+    // Check URL hash for recovery token FIRST (before any async calls)
+    const hash = window.location.hash;
+    const isRecoveryLink =
+      hash.includes("type=recovery") ||
+      hash.includes("access_token");
+
+    // Register listener BEFORE getSession so we don't miss events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
+      if (event === "PASSWORD_RECOVERY") {
+        setSessionReady(true);
+        setChecking(false);
+      } else if (event === "SIGNED_IN" && session) {
         setSessionReady(true);
         setChecking(false);
       } else if (event === "SIGNED_OUT") {
@@ -28,12 +37,23 @@ export default function ResetPassword() {
       }
     });
 
-    // Check if there's already a valid session (e.g. token was processed before mount)
+    // Check existing session (covers case where token was processed before mount)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setSessionReady(true);
+        setChecking(false);
+      } else if (isRecoveryLink) {
+        // Hash present but session not yet established — keep checking briefly
+        // Supabase SDK will process the hash and fire onAuthStateChange
+        setTimeout(() => {
+          supabase.auth.getSession().then(({ data: { session: s } }) => {
+            if (s) setSessionReady(true);
+            setChecking(false);
+          });
+        }, 1500);
+      } else {
+        setChecking(false);
       }
-      setChecking(false);
     });
 
     return () => subscription.unsubscribe();
