@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -20,14 +22,18 @@ const signupSchema = loginSchema.extend({
   path: ["confirmPassword"]
 });
 
+type View = "login" | "signup" | "forgot";
+
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [view, setView] = useState<View>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<any>({});
+  const [forgotLoading, setForgotLoading] = useState(false);
   const { signIn, signUp } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,7 +41,7 @@ export default function Auth() {
     setErrors({});
 
     try {
-      if (isLogin) {
+      if (view === "login") {
         const validatedData = loginSchema.parse({ email, password });
         const { error } = await signIn(validatedData.email, validatedData.password);
         if (!error) {
@@ -45,7 +51,7 @@ export default function Auth() {
         const validatedData = signupSchema.parse({ email, password, fullName, confirmPassword });
         const { error } = await signUp(validatedData.email, validatedData.password, validatedData.fullName);
         if (!error) {
-          setIsLogin(true);
+          setView("login");
         }
       }
     } catch (error) {
@@ -61,6 +67,25 @@ export default function Auth() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast({ variant: "destructive", title: "Atenção", description: "Digite seu e-mail para recuperar a senha." });
+      return;
+    }
+    setForgotLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setForgotLoading(false);
+    if (error) {
+      toast({ variant: "destructive", title: "Erro", description: error.message });
+    } else {
+      toast({ title: "E-mail enviado!", description: "Verifique sua caixa de entrada para redefinir sua senha." });
+      setView("login");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-azul-claro via-background to-rosa-bebe p-4">
       <Card className="w-full max-w-md p-8 shadow-xl border-2 border-azul-claro/30">
@@ -72,86 +97,132 @@ export default function Auth() {
           <p className="text-muted-foreground">Cuidado especializado para seu filho</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
+        {/* Forgot password view */}
+        {view === "forgot" ? (
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <p className="text-sm text-muted-foreground text-center">
+              Digite seu e-mail cadastrado e enviaremos um link para você redefinir sua senha.
+            </p>
             <div className="space-y-2">
-              <Label htmlFor="fullName">Nome Completo</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
-                id="fullName"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
                 className="border-2 border-azul-claro/30 focus:border-primary"
               />
-              {errors.fullName && (
-                <p className="text-sm text-destructive">{errors.fullName}</p>
+            </div>
+            <Button
+              type="submit"
+              disabled={forgotLoading}
+              className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
+            >
+              {forgotLoading ? "Enviando..." : "Enviar link de recuperação"}
+            </Button>
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => { setView("login"); setErrors({}); }}
+                className="text-primary hover:underline text-sm"
+              >
+                Voltar ao login
+              </button>
+            </div>
+          </form>
+        ) : (
+          /* Login / Signup view */
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {view === "signup" && (
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Nome Completo</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="border-2 border-azul-claro/30 focus:border-primary"
+                />
+                {errors.fullName && (
+                  <p className="text-sm text-destructive">{errors.fullName}</p>
+                )}
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="border-2 border-azul-claro/30 focus:border-primary"
+              />
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email}</p>
               )}
             </div>
-          )}
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border-2 border-azul-claro/30 focus:border-primary"
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border-2 border-azul-claro/30 focus:border-primary"
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password}</p>
-            )}
-          </div>
-
-          {!isLogin && (
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Senha</Label>
+                {view === "login" && (
+                  <button
+                    type="button"
+                    onClick={() => { setView("forgot"); setErrors({}); }}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Esqueceu a senha?
+                  </button>
+                )}
+              </div>
               <Input
-                id="confirmPassword"
+                id="password"
                 type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="border-2 border-azul-claro/30 focus:border-primary"
               />
-              {errors.confirmPassword && (
-                <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password}</p>
               )}
             </div>
-          )}
 
-          <Button 
-            type="submit" 
-            className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
-          >
-            {isLogin ? "Entrar" : "Cadastrar"}
-          </Button>
-        </form>
+            {view === "signup" && (
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="border-2 border-azul-claro/30 focus:border-primary"
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+                )}
+              </div>
+            )}
 
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setErrors({});
-            }}
-            className="text-primary hover:underline text-sm"
-          >
-            {isLogin ? "Não tem conta? Cadastre-se" : "Já tem conta? Faça login"}
-          </button>
-        </div>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
+            >
+              {view === "login" ? "Entrar" : "Cadastrar"}
+            </Button>
+
+            <div className="mt-2 text-center">
+              <button
+                type="button"
+                onClick={() => { setView(view === "login" ? "signup" : "login"); setErrors({}); }}
+                className="text-primary hover:underline text-sm"
+              >
+                {view === "login" ? "Não tem conta? Cadastre-se" : "Já tem conta? Faça login"}
+              </button>
+            </div>
+          </form>
+        )}
       </Card>
     </div>
   );
