@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, MapPin, Phone, Mail, Clock, Navigation, MessageCircle } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Mail, Clock, Navigation, MessageCircle, Instagram } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
