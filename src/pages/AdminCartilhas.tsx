@@ -128,16 +128,11 @@ export default function AdminCartilhas() {
 
       if (uploadError) throw uploadError;
 
-      // Obter URL pública do arquivo
-      const { data: urlData } = supabase.storage
-        .from("cartilhas")
-        .getPublicUrl(filePath);
-
-      // Salvar metadados no banco
+      // Store the file path (bucket is private, signed URLs generated on access)
       const { error: insertError } = await supabase.from("cartilhas").insert({
         title: formData.title,
         description: formData.description || null,
-        file_url: urlData.publicUrl,
+        file_url: filePath,
         file_type: formData.file.type,
       });
 
