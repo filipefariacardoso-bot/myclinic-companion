@@ -23,6 +23,7 @@ interface ClinicLocation {
   opening_hours: string | null;
   map_url: string | null;
   is_active: boolean;
+  instagram: string | null;
 }
 
 export default function AdminLocation() {

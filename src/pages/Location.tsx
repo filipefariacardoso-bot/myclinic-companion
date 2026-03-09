@@ -17,6 +17,7 @@ interface ClinicLocation {
   email: string | null;
   opening_hours: string | null;
   map_url: string | null;
+  instagram: string | null;
 }
 
 export default function Location() {
