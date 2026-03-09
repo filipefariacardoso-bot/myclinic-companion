@@ -21,7 +21,7 @@ const signupSchema = loginSchema.extend({
   path: ["confirmPassword"]
 });
 
-type View = "login" | "signup" | "forgot";
+type View = "login" | "signup";
 
 export default function Auth() {
   const [view, setView] = useState<View>("login");
@@ -30,7 +30,6 @@ export default function Auth() {
   const [fullName, setFullName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<any>({});
-  const [forgotLoading, setForgotLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -66,33 +65,6 @@ export default function Auth() {
     }
   };
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      toast({ variant: "destructive", title: "Atenção", description: "Digite seu e-mail para recuperar a senha." });
-      return;
-    }
-    setForgotLoading(true);
-    try {
-      const res = await fetch(
-        `https://qqrvjqteqltygmkzkvhs.supabase.co/functions/v1/send-temp-password`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnZqcXRlcWx0eWdta3prdmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNTIwMDMsImV4cCI6MjA3OTcyODAwM30.T2575WNJhCy0wbGH60JqXLsgFotLPJVl3Vr3piZbKlM" },
-          body: JSON.stringify({ email }),
-        }
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erro desconhecido");
-      toast({ title: "✅ Senha enviada!", description: "Uma nova senha foi enviada para o seu e-mail." });
-      setView("login");
-    } catch (err: any) {
-      toast({ variant: "destructive", title: "Erro", description: err.message });
-    } finally {
-      setForgotLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-azul-claro via-background to-rosa-bebe p-4">
       <Card className="w-full max-w-md p-8 shadow-xl border-2 border-azul-claro/30">
@@ -104,132 +76,95 @@ export default function Auth() {
           <p className="text-muted-foreground">Cuidado especializado para seu filho</p>
         </div>
 
-        {/* Forgot password view */}
-        {view === "forgot" ? (
-          <form onSubmit={handleForgotPassword} className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">
-              Digite seu e-mail cadastrado e geraremos uma nova senha e enviaremos para você.
-            </p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {view === "signup" && (
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="fullName">Nome Completo</Label>
               <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
+                id="fullName"
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
                 className="border-2 border-azul-claro/30 focus:border-primary"
               />
-            </div>
-            <Button
-              type="submit"
-              disabled={forgotLoading}
-              className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
-            >
-              {forgotLoading ? "Gerando senha..." : "Gerar nova senha e enviar"}
-            </Button>
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => { setView("login"); setErrors({}); }}
-                className="text-primary hover:underline text-sm"
-              >
-                Voltar ao login
-              </button>
-            </div>
-          </form>
-        ) : (
-          /* Login / Signup view */
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {view === "signup" && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Nome Completo</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="border-2 border-azul-claro/30 focus:border-primary"
-                />
-                {errors.fullName && (
-                  <p className="text-sm text-destructive">{errors.fullName}</p>
-                )}
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="border-2 border-azul-claro/30 focus:border-primary"
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email}</p>
+              {errors.fullName && (
+                <p className="text-sm text-destructive">{errors.fullName}</p>
               )}
             </div>
+          )}
 
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border-2 border-azul-claro/30 focus:border-primary"
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Senha</Label>
+              {view === "login" && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Esqueceu a senha?
+                </button>
+              )}
+            </div>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border-2 border-azul-claro/30 focus:border-primary"
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password}</p>
+            )}
+          </div>
+
+          {view === "signup" && (
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha</Label>
-                {view === "login" && (
-                  <button
-                    type="button"
-                    onClick={() => { setView("forgot"); setErrors({}); }}
-                    className="text-xs text-primary hover:underline"
-                  >
-                    Esqueceu a senha?
-                  </button>
-                )}
-              </div>
+              <Label htmlFor="confirmPassword">Confirmar Senha</Label>
               <Input
-                id="password"
+                id="confirmPassword"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="border-2 border-azul-claro/30 focus:border-primary"
               />
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password}</p>
+              {errors.confirmPassword && (
+                <p className="text-sm text-destructive">{errors.confirmPassword}</p>
               )}
             </div>
+          )}
 
-            {view === "signup" && (
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="border-2 border-azul-claro/30 focus:border-primary"
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">{errors.confirmPassword}</p>
-                )}
-              </div>
-            )}
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
+          >
+            {view === "login" ? "Entrar" : "Cadastrar"}
+          </Button>
 
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
+          <div className="mt-2 text-center">
+            <button
+              type="button"
+              onClick={() => { setView(view === "login" ? "signup" : "login"); setErrors({}); }}
+              className="text-primary hover:underline text-sm"
             >
-              {view === "login" ? "Entrar" : "Cadastrar"}
-            </Button>
-
-            <div className="mt-2 text-center">
-              <button
-                type="button"
-                onClick={() => { setView(view === "login" ? "signup" : "login"); setErrors({}); }}
-                className="text-primary hover:underline text-sm"
-              >
-                {view === "login" ? "Não tem conta? Cadastre-se" : "Já tem conta? Faça login"}
-              </button>
-            </div>
-          </form>
-        )}
+              {view === "login" ? "Não tem conta? Cadastre-se" : "Já tem conta? Faça login"}
+            </button>
+          </div>
+        </form>
       </Card>
     </div>
   );
