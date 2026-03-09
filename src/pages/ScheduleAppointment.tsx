@@ -116,12 +116,15 @@ export default function ScheduleAppointment() {
 
       if (error) throw error;
 
-      // Get client email for confirmation
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("email")
-        .eq("id", user.id)
-        .single();
+      // Get client profile (email + phone) and clinic data for the notification
+      const [{ data: profile }, { data: clinicData }] = await Promise.all([
+        supabase.from("profiles").select("email, phone").eq("id", user.id).single(),
+        supabase.from("clinic_location").select("address, city, state, phone").eq("is_active", true).maybeSingle(),
+      ]);
+
+      const clinicAddress = clinicData
+        ? `${clinicData.address}, ${clinicData.city} - ${clinicData.state}`
+        : null;
 
       // Send notification email to clinic (and confirmation to client)
       supabase.functions.invoke("send-appointment-notification", {
@@ -131,6 +134,9 @@ export default function ScheduleAppointment() {
           appointmentType,
           notes: notes || null,
           clientEmail: profile?.email || null,
+          patientPhone: profile?.phone || null,
+          clinicAddress,
+          clinicPhone: clinicData?.phone || null,
         },
       }).catch((err) => console.error("Email notification error:", err));
 

@@ -16,7 +16,16 @@ serve(async (req) => {
       throw new Error('RESEND_API_KEY not configured');
     }
 
-    const { patientName, appointmentDate, appointmentType, notes, clientEmail } = await req.json();
+    const {
+      patientName,
+      appointmentDate,
+      appointmentType,
+      notes,
+      clientEmail,
+      patientPhone,
+      clinicAddress,
+      clinicPhone,
+    } = await req.json();
 
     // Format date in Brazilian Portuguese
     const date = new Date(appointmentDate);
@@ -32,6 +41,9 @@ serve(async (req) => {
       minute: '2-digit',
       timeZone: 'America/Sao_Paulo',
     });
+
+    const clinicAddressDisplay = clinicAddress || 'Consulte o aplicativo para o endereço completo';
+    const clinicPhoneDisplay = clinicPhone || 'Consulte o aplicativo';
 
     // 1. Send notification to clinic
     const clinicEmailRes = await fetch('https://api.resend.com/emails', {
@@ -70,6 +82,18 @@ serve(async (req) => {
                   <td style="padding: 12px 0; color: #6b7280; font-size: 14px;">🩺 Tipo</td>
                   <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${appointmentType}</td>
                 </tr>
+                ${patientPhone ? `
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                  <td style="padding: 12px 0; color: #6b7280; font-size: 14px;">📱 Telefone</td>
+                  <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${patientPhone}</td>
+                </tr>
+                ` : ''}
+                ${clientEmail ? `
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                  <td style="padding: 12px 0; color: #6b7280; font-size: 14px;">✉️ E-mail</td>
+                  <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${clientEmail}</td>
+                </tr>
+                ` : ''}
                 ${notes ? `
                 <tr>
                   <td style="padding: 12px 0; color: #6b7280; font-size: 14px; vertical-align: top;">📝 Observações</td>
@@ -132,15 +156,31 @@ serve(async (req) => {
                     <td style="padding: 12px 0; color: #6b7280; font-size: 14px;">🕐 Horário</td>
                     <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${formattedTime}h (Horário de Brasília)</td>
                   </tr>
-                  <tr>
+                  <tr style="border-bottom: 1px solid #e5e7eb;">
                     <td style="padding: 12px 0; color: #6b7280; font-size: 14px;">🩺 Tipo</td>
                     <td style="padding: 12px 0; color: #111827; font-weight: 600; font-size: 14px;">${appointmentType}</td>
                   </tr>
+                  <tr>
+                    <td style="padding: 12px 0; color: #6b7280; font-size: 14px; vertical-align: top;">📍 Endereço</td>
+                    <td style="padding: 12px 0; color: #111827; font-size: 14px;">${clinicAddressDisplay}</td>
+                  </tr>
                 </table>
 
-                <div style="background: #fef3c7; border-radius: 12px; padding: 16px; margin-top: 16px; border-left: 4px solid #f59e0b;">
+                <div style="background: #f0fdf4; border-radius: 12px; padding: 16px; margin-top: 16px; border-left: 4px solid #22c55e;">
+                  <p style="margin: 0; color: #15803d; font-size: 14px; font-weight: 600;">📋 O que trazer na consulta:</p>
+                  <ul style="margin: 8px 0 0; padding-left: 18px; color: #166534; font-size: 13px; line-height: 1.8;">
+                    <li>Carteirinha de vacinação da criança</li>
+                    <li>Documentos de identidade (RG/CPF)</li>
+                    <li>Cartão do plano de saúde (se houver)</li>
+                    <li>Exames e receitas anteriores (se houver)</li>
+                  </ul>
+                </div>
+
+                <div style="background: #fef3c7; border-radius: 12px; padding: 16px; margin-top: 12px; border-left: 4px solid #f59e0b;">
                   <p style="margin: 0; color: #92400e; font-size: 13px; font-weight: 600;">⚠️ Aguarde a confirmação da clínica.</p>
-                  <p style="margin: 6px 0 0; color: #78350f; font-size: 13px;">Em caso de dúvidas ou necessidade de cancelamento, entre em contato com a clínica.</p>
+                  <p style="margin: 6px 0 0; color: #78350f; font-size: 13px;">Para cancelamentos ou dúvidas, entre em contato:<br/>
+                  📞 ${clinicPhoneDisplay}<br/>
+                  Chegar com 10 minutos de antecedência.</p>
                 </div>
                 
                 <p style="color: #6b7280; font-size: 13px; margin-top: 20px;">Você receberá um lembrete 24 horas antes da sua consulta. 😊</p>
