@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getSignedUrl } from "@/lib/storage";
 import DocumentViewer from "@/components/DocumentViewer";
 
 export default function ViewEbook() {
@@ -22,7 +23,9 @@ export default function ViewEbook() {
         .single();
 
       if (error) throw error;
-      setEbook(data);
+
+      const signedUrl = await getSignedUrl(data.file_url, "ebooks");
+      setEbook({ ...data, file_url: signedUrl });
     } catch (error) {
       console.error("Erro ao carregar e-book:", error);
       toast.error("Erro ao carregar e-book");
