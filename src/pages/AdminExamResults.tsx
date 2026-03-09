@@ -95,24 +95,30 @@ export default function AdminExamResults() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!formData.user_id) {
+      toast({
+        title: "Selecione o paciente primeiro",
+        description: "Escolha o paciente antes de enviar o arquivo.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `exam-results/${fileName}`;
+      // Store under patient's user_id folder so RLS scopes access correctly
+      const filePath = `${formData.user_id}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from("ebooks")
+        .from("exam-results")
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from("ebooks")
-        .getPublicUrl(filePath);
-
-      setFormData(prev => ({ ...prev, file_url: publicUrl }));
+      // Store only the relative path — never a public URL for medical files
+      setFormData(prev => ({ ...prev, file_url: filePath }));
       toast({
         title: "Arquivo enviado!",
         description: "O arquivo foi carregado com sucesso."

@@ -36,7 +36,19 @@ export default function ExamResults() {
         .order("exam_date", { ascending: false });
 
       if (error) throw error;
-      setResults((data as unknown as ExamResult[]) || []);
+
+      // Generate short-lived signed URLs for each file (1 hour expiry)
+      const resultsWithUrls = await Promise.all(
+        ((data as unknown as ExamResult[]) || []).map(async (result) => {
+          if (!result.file_url) return result;
+          const { data: signedData } = await supabase.storage
+            .from("exam-results")
+            .createSignedUrl(result.file_url, 3600);
+          return { ...result, file_url: signedData?.signedUrl ?? null };
+        })
+      );
+
+      setResults(resultsWithUrls);
     } catch (error) {
       console.error("Erro ao buscar resultados:", error);
     } finally {
