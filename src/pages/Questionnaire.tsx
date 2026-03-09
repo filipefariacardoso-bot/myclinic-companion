@@ -421,15 +421,15 @@ export default function Questionnaire() {
                       onValueChange={(value) => updateField("urgencyLevel", value)}
                       className="mt-2 space-y-2"
                     >
-                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-green-500/30 hover:border-green-500 cursor-pointer">
+                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-success/30 hover:border-success cursor-pointer">
                         <RadioGroupItem value="baixa" id="baixa" />
                         <Label htmlFor="baixa" className="cursor-pointer flex-1">Baixa (pode aguardar)</Label>
                       </div>
-                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-yellow-500/30 hover:border-yellow-500 cursor-pointer">
+                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-warning/30 hover:border-warning cursor-pointer">
                         <RadioGroupItem value="media" id="media" />
                         <Label htmlFor="media" className="cursor-pointer flex-1">Média (prefiro hoje)</Label>
                       </div>
-                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-red-500/30 hover:border-red-500 cursor-pointer">
+                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-destructive/30 hover:border-destructive cursor-pointer">
                         <RadioGroupItem value="alta" id="alta" />
                         <Label htmlFor="alta" className="cursor-pointer flex-1">Alta (urgente)</Label>
                       </div>
