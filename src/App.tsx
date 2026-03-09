@@ -32,6 +32,7 @@ import ExamResults from "./pages/ExamResults";
 import ScheduleAppointment from "./pages/ScheduleAppointment";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
@@ -192,6 +193,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Profile />
