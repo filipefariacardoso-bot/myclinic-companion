@@ -145,6 +145,8 @@ export default function Questionnaire() {
         child_name: validatedData.childName,
         child_age: validatedData.childAge,
         child_sex: validatedData.childSex,
+        mother_name: (formData as any).motherName || null,
+        father_name: (formData as any).fatherName || null,
         consultation_reason: validatedData.consultationReason,
         main_symptoms: validatedData.mainSymptoms,
         symptoms_duration: validatedData.symptomsDuration,
@@ -182,7 +184,7 @@ export default function Questionnaire() {
         complaint_details: validatedData.currentIllnessHistory,
         health_history: validatedData.pastMedicalHistory,
         medications: validatedData.currentMedications
-      });
+      } as any);
 
       if (error) throw error;
 
