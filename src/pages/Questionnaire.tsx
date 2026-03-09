@@ -74,6 +74,8 @@ export default function Questionnaire() {
     childName: "",
     childAge: "",
     childSex: "",
+    motherName: "",
+    fatherName: "",
     consultationReason: "",
     mainSymptoms: [] as string[],
     symptomsDuration: "",
@@ -143,6 +145,8 @@ export default function Questionnaire() {
         child_name: validatedData.childName,
         child_age: validatedData.childAge,
         child_sex: validatedData.childSex,
+        mother_name: (formData as any).motherName || null,
+        father_name: (formData as any).fatherName || null,
         consultation_reason: validatedData.consultationReason,
         main_symptoms: validatedData.mainSymptoms,
         symptoms_duration: validatedData.symptomsDuration,
@@ -180,7 +184,7 @@ export default function Questionnaire() {
         complaint_details: validatedData.currentIllnessHistory,
         health_history: validatedData.pastMedicalHistory,
         medications: validatedData.currentMedications
-      });
+      } as any);
 
       if (error) throw error;
 
@@ -317,6 +321,28 @@ export default function Questionnaire() {
                   <p className="text-sm text-destructive mt-1">{errors.childSex}</p>
                 )}
               </div>
+
+              <div>
+                <Label htmlFor="motherName">Nome da Mãe *</Label>
+                <Input
+                  id="motherName"
+                  placeholder="Nome completo da mãe"
+                  value={(formData as any).motherName}
+                  onChange={(e) => updateField("motherName", e.target.value)}
+                  className="border-2 border-azul-claro/30"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="fatherName">Nome do Pai</Label>
+                <Input
+                  id="fatherName"
+                  placeholder="Nome completo do pai"
+                  value={(formData as any).fatherName}
+                  onChange={(e) => updateField("fatherName", e.target.value)}
+                  className="border-2 border-azul-claro/30"
+                />
+              </div>
             </div>
           )}
 
@@ -395,15 +421,15 @@ export default function Questionnaire() {
                       onValueChange={(value) => updateField("urgencyLevel", value)}
                       className="mt-2 space-y-2"
                     >
-                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-green-500/30 hover:border-green-500 cursor-pointer">
+                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-success/30 hover:border-success cursor-pointer">
                         <RadioGroupItem value="baixa" id="baixa" />
                         <Label htmlFor="baixa" className="cursor-pointer flex-1">Baixa (pode aguardar)</Label>
                       </div>
-                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-yellow-500/30 hover:border-yellow-500 cursor-pointer">
+                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-warning/30 hover:border-warning cursor-pointer">
                         <RadioGroupItem value="media" id="media" />
                         <Label htmlFor="media" className="cursor-pointer flex-1">Média (prefiro hoje)</Label>
                       </div>
-                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-red-500/30 hover:border-red-500 cursor-pointer">
+                      <div className="flex items-center space-x-2 p-3 rounded-lg border-2 border-destructive/30 hover:border-destructive cursor-pointer">
                         <RadioGroupItem value="alta" id="alta" />
                         <Label htmlFor="alta" className="cursor-pointer flex-1">Alta (urgente)</Label>
                       </div>
