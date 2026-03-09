@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -74,15 +73,23 @@ export default function Auth() {
       return;
     }
     setForgotLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `https://myclinic-companion.lovable.app/reset-password`,
-    });
-    setForgotLoading(false);
-    if (error) {
-      toast({ variant: "destructive", title: "Erro", description: error.message });
-    } else {
-      toast({ title: "E-mail enviado!", description: "Verifique sua caixa de entrada para redefinir sua senha." });
+    try {
+      const res = await fetch(
+        `https://qqrvjqteqltygmkzkvhs.supabase.co/functions/v1/send-temp-password`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxcnZqcXRlcWx0eWdta3prdmhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNTIwMDMsImV4cCI6MjA3OTcyODAwM30.T2575WNJhCy0wbGH60JqXLsgFotLPJVl3Vr3piZbKlM" },
+          body: JSON.stringify({ email }),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erro desconhecido");
+      toast({ title: "✅ Senha enviada!", description: "Uma nova senha foi enviada para o seu e-mail." });
       setView("login");
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Erro", description: err.message });
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -101,7 +108,7 @@ export default function Auth() {
         {view === "forgot" ? (
           <form onSubmit={handleForgotPassword} className="space-y-4">
             <p className="text-sm text-muted-foreground text-center">
-              Digite seu e-mail cadastrado e enviaremos um link para você redefinir sua senha.
+              Digite seu e-mail cadastrado e geraremos uma nova senha e enviaremos para você.
             </p>
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
@@ -119,7 +126,7 @@ export default function Auth() {
               disabled={forgotLoading}
               className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
             >
-              {forgotLoading ? "Enviando..." : "Enviar link de recuperação"}
+              {forgotLoading ? "Gerando senha..." : "Gerar nova senha e enviar"}
             </Button>
             <div className="text-center">
               <button
