@@ -137,17 +137,24 @@ export default function ScheduleAppointment() {
   if (success) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-azul-claro/20 to-verde-menta/20 flex items-center justify-center p-6">
-        <Card className="max-w-md w-full text-center border-2 border-verde-menta/40 shadow-xl">
+        <Card className="max-w-md w-full text-center border-2 border-success/40 shadow-xl">
           <CardContent className="pt-10 pb-10 space-y-4">
-            <div className="w-20 h-20 bg-verde-menta/20 rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-10 h-10 text-verde-menta" />
+            <div className="w-20 h-20 bg-success/20 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-10 h-10 text-success" />
             </div>
-            <h2 className="text-2xl font-bold">Consulta Agendada! 🎉</h2>
-            <p className="text-muted-foreground">
-              Sua consulta com a <strong>Dra. Michelle Caires</strong> foi agendada com sucesso.
-            </p>
+            <h2 className="text-2xl font-bold text-success">Solicitação Enviada! ✅</h2>
+
+            {/* Prominent confirmation banner */}
+            <div className="bg-success/10 border-2 border-success/30 rounded-xl p-4 text-left space-y-1">
+              <p className="text-success font-semibold text-sm flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4" />
+                Sua consulta foi solicitada com sucesso!
+              </p>
+              <p className="text-success/80 text-sm">Aguarde a confirmação da clínica.</p>
+            </div>
+
             {selectedDate && selectedSlot && (
-              <div className="bg-azul-claro/10 rounded-xl p-4 space-y-2 text-sm">
+              <div className="bg-azul-claro/10 rounded-xl p-4 space-y-2 text-sm text-left">
                 <p className="font-semibold">
                   📅 {format(selectedDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                 </p>
@@ -157,7 +164,7 @@ export default function ScheduleAppointment() {
               </div>
             )}
             <p className="text-xs text-muted-foreground">
-              Aguarde a confirmação da clínica. Em caso de dúvidas, entre em contato.
+              Em caso de dúvidas, entre em contato com a clínica.
             </p>
             <div className="flex gap-3 justify-center pt-2">
               <Button onClick={() => navigate("/appointments")} variant="outline">
