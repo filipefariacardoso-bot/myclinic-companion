@@ -115,6 +115,29 @@ export default function Auth() {
             )}
           </div>
 
+          {view === "signup" && (
+            <div className="space-y-2">
+              <Label htmlFor="phone">
+                Telefone / WhatsApp <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="(75) 99999-9999"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="border-2 border-azul-claro/30 focus:border-primary"
+              />
+              {errors.phone ? (
+                <p className="text-sm text-destructive">{errors.phone}</p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Obrigatório para receber confirmações de consulta
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Senha</Label>

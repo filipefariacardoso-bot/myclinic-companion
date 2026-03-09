@@ -178,6 +178,11 @@ const App = () => (
                 <AdminExamResults />
               </ProtectedRoute>
             } />
+            <Route path="/admin/clinic-settings" element={
+              <ProtectedRoute>
+                <AdminClinicSettings />
+              </ProtectedRoute>
+            } />
             <Route path="/gifts" element={
               <ProtectedRoute>
                 <Gifts />
