@@ -41,6 +41,7 @@ export default function AdminLocation() {
     zip_code: "",
     phone: "",
     email: "",
+    instagram: "",
     opening_hours: "",
     map_url: "",
     is_active: true,
