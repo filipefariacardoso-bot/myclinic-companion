@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, FileText, MapPin, Heart, Users } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import ConsentDialog from "@/components/ConsentDialog";
 
@@ -70,15 +70,26 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground">Olá, {user?.email}</p>
             </div>
           </div>
-          <Button 
-            onClick={handleSignOut} 
-            variant="outline" 
-            size="sm"
-            className="bg-white/90 hover:bg-white"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => navigate("/profile")}
+              variant="outline"
+              size="sm"
+              className="bg-white/90 hover:bg-white"
+            >
+              <User className="w-4 h-4 mr-2" />
+              Perfil
+            </Button>
+            <Button 
+              onClick={handleSignOut} 
+              variant="outline" 
+              size="sm"
+              className="bg-white/90 hover:bg-white"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 
