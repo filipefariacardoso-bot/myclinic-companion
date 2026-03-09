@@ -100,14 +100,14 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <Admin />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/patient/:id" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <PatientDetails />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/cartilhas" element={
               <ProtectedRoute>
@@ -155,59 +155,59 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/admin/cartilhas" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminCartilhas />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/ebooks" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminEbooks />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/partners" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminPartners />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/payment" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminPayment />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/location" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminLocation />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/appointments" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminAppointments />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/satisfaction" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminSatisfaction />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/gifts" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminGifts />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/exam-results" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminExamResults />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/clinic-settings" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminClinicSettings />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/questionarios" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminQuestionarios />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/gifts" element={
               <ProtectedRoute>
