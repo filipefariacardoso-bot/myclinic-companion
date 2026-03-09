@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Search, Eye, FileText, Calendar, User } from "lucide-react";
@@ -169,7 +168,6 @@ function formatFieldValue(key: string, value: any): string {
 }
 
 export default function AdminQuestionarios() {
-  const { isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -182,31 +180,49 @@ export default function AdminQuestionarios() {
   const [detailOpen, setDetailOpen] = useState(false);
 
   useEffect(() => {
-    if (!isAdmin) {
-      navigate("/");
-      return;
-    }
     fetchResponses();
-  }, [isAdmin, navigate]);
+  }, []);
 
   const fetchResponses = async () => {
     setLoading(true);
+    // Fetch questionnaires first, then enrich with profile data separately
+    // (no declared FK between medical_questionnaires and profiles)
     const { data, error } = await supabase
       .from("medical_questionnaires")
-      .select(`
-        *,
-        profiles!medical_questionnaires_user_id_fkey (
-          full_name,
-          email
-        )
-      `)
+      .select("*")
       .order("submitted_at", { ascending: false });
 
     if (error) {
       toast({ variant: "destructive", title: "Erro ao carregar respostas", description: error.message });
-    } else {
-      setResponses((data as any) || []);
+      setLoading(false);
+      return;
     }
+
+    const rows = data || [];
+
+    // Fetch distinct profile data for all user_ids in the result
+    const userIds = [...new Set(rows.map((r: any) => r.user_id))];
+    let profileMap: Record<string, { full_name: string; email: string }> = {};
+
+    if (userIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", userIds as string[]);
+
+      if (profiles) {
+        profiles.forEach((p: any) => {
+          profileMap[p.id] = { full_name: p.full_name, email: p.email };
+        });
+      }
+    }
+
+    const enriched = rows.map((r: any) => ({
+      ...r,
+      profiles: profileMap[r.user_id] || null,
+    }));
+
+    setResponses(enriched as any);
     setLoading(false);
   };
 
@@ -248,8 +264,6 @@ export default function AdminQuestionarios() {
     if (status === "completed") return { label: "Concluído", cls: "bg-success/20 text-success" };
     return { label: "Pendente", cls: "bg-warning/20 text-warning" };
   };
-
-  if (!isAdmin) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-azul-claro/10 to-rosa-bebe/10">

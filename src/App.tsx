@@ -60,6 +60,26 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading, isAdmin } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-azul-claro to-rosa-bebe rounded-full animate-pulse" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/auth" replace />;
+  if (!isAdmin) return <Navigate to="/" replace />;
+
+  return <>{children}</>;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -80,14 +100,14 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <Admin />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/patient/:id" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <PatientDetails />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/cartilhas" element={
               <ProtectedRoute>
@@ -135,59 +155,59 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/admin/cartilhas" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminCartilhas />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/ebooks" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminEbooks />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/partners" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminPartners />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/payment" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminPayment />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/location" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminLocation />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/appointments" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminAppointments />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/satisfaction" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminSatisfaction />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/gifts" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminGifts />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/exam-results" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminExamResults />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/clinic-settings" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminClinicSettings />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/admin/questionarios" element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminQuestionarios />
-              </ProtectedRoute>
+              </AdminRoute>
             } />
             <Route path="/gifts" element={
               <ProtectedRoute>
