@@ -97,86 +97,132 @@ export default function Auth() {
           <p className="text-muted-foreground">Cuidado especializado para seu filho</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
+        {/* Forgot password view */}
+        {view === "forgot" ? (
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <p className="text-sm text-muted-foreground text-center">
+              Digite seu e-mail cadastrado e enviaremos um link para você redefinir sua senha.
+            </p>
             <div className="space-y-2">
-              <Label htmlFor="fullName">Nome Completo</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
-                id="fullName"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seu@email.com"
                 className="border-2 border-azul-claro/30 focus:border-primary"
               />
-              {errors.fullName && (
-                <p className="text-sm text-destructive">{errors.fullName}</p>
+            </div>
+            <Button
+              type="submit"
+              disabled={forgotLoading}
+              className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
+            >
+              {forgotLoading ? "Enviando..." : "Enviar link de recuperação"}
+            </Button>
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => { setView("login"); setErrors({}); }}
+                className="text-primary hover:underline text-sm"
+              >
+                Voltar ao login
+              </button>
+            </div>
+          </form>
+        ) : (
+          /* Login / Signup view */
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {view === "signup" && (
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Nome Completo</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="border-2 border-azul-claro/30 focus:border-primary"
+                />
+                {errors.fullName && (
+                  <p className="text-sm text-destructive">{errors.fullName}</p>
+                )}
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="border-2 border-azul-claro/30 focus:border-primary"
+              />
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email}</p>
               )}
             </div>
-          )}
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border-2 border-azul-claro/30 focus:border-primary"
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border-2 border-azul-claro/30 focus:border-primary"
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password}</p>
-            )}
-          </div>
-
-          {!isLogin && (
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Senha</Label>
+                {view === "login" && (
+                  <button
+                    type="button"
+                    onClick={() => { setView("forgot"); setErrors({}); }}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Esqueceu a senha?
+                  </button>
+                )}
+              </div>
               <Input
-                id="confirmPassword"
+                id="password"
                 type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="border-2 border-azul-claro/30 focus:border-primary"
               />
-              {errors.confirmPassword && (
-                <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password}</p>
               )}
             </div>
-          )}
 
-          <Button 
-            type="submit" 
-            className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
-          >
-            {isLogin ? "Entrar" : "Cadastrar"}
-          </Button>
-        </form>
+            {view === "signup" && (
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="border-2 border-azul-claro/30 focus:border-primary"
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+                )}
+              </div>
+            )}
 
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setErrors({});
-            }}
-            className="text-primary hover:underline text-sm"
-          >
-            {isLogin ? "Não tem conta? Cadastre-se" : "Já tem conta? Faça login"}
-          </button>
-        </div>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
+            >
+              {view === "login" ? "Entrar" : "Cadastrar"}
+            </Button>
+
+            <div className="mt-2 text-center">
+              <button
+                type="button"
+                onClick={() => { setView(view === "login" ? "signup" : "login"); setErrors({}); }}
+                className="text-primary hover:underline text-sm"
+              >
+                {view === "login" ? "Não tem conta? Cadastre-se" : "Já tem conta? Faça login"}
+              </button>
+            </div>
+          </form>
+        )}
       </Card>
     </div>
   );
