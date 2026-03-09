@@ -321,6 +321,28 @@ export default function Questionnaire() {
                   <p className="text-sm text-destructive mt-1">{errors.childSex}</p>
                 )}
               </div>
+
+              <div>
+                <Label htmlFor="motherName">Nome da Mãe *</Label>
+                <Input
+                  id="motherName"
+                  placeholder="Nome completo da mãe"
+                  value={(formData as any).motherName}
+                  onChange={(e) => updateField("motherName", e.target.value)}
+                  className="border-2 border-azul-claro/30"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="fatherName">Nome do Pai</Label>
+                <Input
+                  id="fatherName"
+                  placeholder="Nome completo do pai"
+                  value={(formData as any).fatherName}
+                  onChange={(e) => updateField("fatherName", e.target.value)}
+                  className="border-2 border-azul-claro/30"
+                />
+              </div>
             </div>
           )}
 
