@@ -29,6 +29,7 @@ import Ebooks from "./pages/Ebooks";
 import ViewEbook from "./pages/ViewEbook";
 import Satisfaction from "./pages/Satisfaction";
 import ExamResults from "./pages/ExamResults";
+import ScheduleAppointment from "./pages/ScheduleAppointment";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
