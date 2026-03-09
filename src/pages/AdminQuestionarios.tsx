@@ -265,8 +265,6 @@ export default function AdminQuestionarios() {
     return { label: "Pendente", cls: "bg-warning/20 text-warning" };
   };
 
-  if (!isAdmin) return null;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-azul-claro/10 to-rosa-bebe/10">
       {/* Header */}
