@@ -167,7 +167,6 @@ function formatFieldValue(key: string, value: any): string {
 }
 
 export default function AdminQuestionarios() {
-  const { isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
