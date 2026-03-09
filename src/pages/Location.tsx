@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, MapPin, Phone, Mail, Clock, Navigation, MessageCircle } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Mail, Clock, Navigation, MessageCircle, Instagram } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -17,6 +17,7 @@ interface ClinicLocation {
   email: string | null;
   opening_hours: string | null;
   map_url: string | null;
+  instagram: string | null;
 }
 
 export default function Location() {
@@ -207,6 +208,17 @@ export default function Location() {
                       >
                         <Mail className="w-5 h-5 flex-shrink-0" />
                         <span>{location.email}</span>
+                      </a>
+                    )}
+                    {location.instagram && (
+                      <a
+                        href={`https://instagram.com/${location.instagram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <Instagram className="w-5 h-5 flex-shrink-0" />
+                        <span>{location.instagram}</span>
                       </a>
                     )}
                   </div>

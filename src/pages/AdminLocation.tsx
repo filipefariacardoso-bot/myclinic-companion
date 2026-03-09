@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Plus, Trash2, Edit2, MapPin } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Edit2, MapPin, Instagram } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -23,6 +23,7 @@ interface ClinicLocation {
   opening_hours: string | null;
   map_url: string | null;
   is_active: boolean;
+  instagram: string | null;
 }
 
 export default function AdminLocation() {
@@ -40,6 +41,7 @@ export default function AdminLocation() {
     zip_code: "",
     phone: "",
     email: "",
+    instagram: "",
     opening_hours: "",
     map_url: "",
     is_active: true,
@@ -84,6 +86,7 @@ export default function AdminLocation() {
             zip_code: formData.zip_code || null,
             phone: formData.phone || null,
             email: formData.email || null,
+            instagram: formData.instagram || null,
             opening_hours: formData.opening_hours || null,
             map_url: formData.map_url || null,
             is_active: formData.is_active,
@@ -101,6 +104,7 @@ export default function AdminLocation() {
           zip_code: formData.zip_code || null,
           phone: formData.phone || null,
           email: formData.email || null,
+          instagram: formData.instagram || null,
           opening_hours: formData.opening_hours || null,
           map_url: formData.map_url || null,
           is_active: formData.is_active,
@@ -127,6 +131,7 @@ export default function AdminLocation() {
       zip_code: location.zip_code || "",
       phone: location.phone || "",
       email: location.email || "",
+      instagram: location.instagram || "",
       opening_hours: location.opening_hours || "",
       map_url: location.map_url || "",
       is_active: location.is_active,
@@ -158,6 +163,7 @@ export default function AdminLocation() {
       zip_code: "",
       phone: "",
       email: "",
+      instagram: "",
       opening_hours: "",
       map_url: "",
       is_active: true,
@@ -249,6 +255,11 @@ export default function AdminLocation() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
+                <Input
+                  placeholder="Instagram (@usuario)"
+                  value={formData.instagram}
+                  onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                />
                 <Textarea
                   placeholder="Horário de Funcionamento"
                   value={formData.opening_hours}
@@ -310,6 +321,7 @@ export default function AdminLocation() {
                       <div className="mt-2 text-sm text-muted-foreground space-y-1">
                         {location.phone && <p>📞 {location.phone}</p>}
                         {location.email && <p>✉️ {location.email}</p>}
+                        {location.instagram && <p>📸 {location.instagram}</p>}
                         {location.opening_hours && <p>🕐 {location.opening_hours}</p>}
                       </div>
                     </div>
