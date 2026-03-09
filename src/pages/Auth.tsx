@@ -16,7 +16,7 @@ const loginSchema = z.object({
 
 const signupSchema = loginSchema.extend({
   fullName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  phone: z.string().min(10, "Telefone inválido (mínimo 10 dígitos)").regex(/^\(?\d{2}\)?[\s\-]?\d{4,5}[\s\-]?\d{4}$/, "Formato inválido. Ex: (75) 99999-9999"),
+  phone: z.string().min(1, "Telefone é obrigatório para receber confirmações de consulta").min(10, "Telefone inválido (mínimo 10 dígitos)").regex(/^\(?\d{2}\)?[\s\-]?\d{4,5}[\s\-]?\d{4}$/, "Formato inválido. Ex: (XX) XXXXX-XXXX"),
   confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
@@ -101,20 +101,6 @@ export default function Auth() {
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border-2 border-azul-claro/30 focus:border-primary"
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
-          </div>
-
           {view === "signup" && (
             <div className="space-y-2">
               <Label htmlFor="phone">
@@ -123,7 +109,7 @@ export default function Auth() {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="(75) 99999-9999"
+                placeholder="(XX) XXXXX-XXXX"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="border-2 border-azul-claro/30 focus:border-primary"
@@ -137,6 +123,20 @@ export default function Auth() {
               )}
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border-2 border-azul-claro/30 focus:border-primary"
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email}</p>
+            )}
+          </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
