@@ -17,46 +17,58 @@ export default function ResetPassword() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check URL hash for recovery token FIRST (before any async calls)
+    let cancelled = false;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+
     const hash = window.location.hash;
     const isRecoveryLink =
       hash.includes("type=recovery") ||
-      hash.includes("access_token");
+      hash.includes("access_token") ||
+      hash.includes("refresh_token");
 
-    // Register listener BEFORE getSession so we don't miss events
+    const resolveSession = (hasSession: boolean) => {
+      if (cancelled) return;
+      setSessionReady(hasSession);
+      setChecking(false);
+      if (intervalId) clearInterval(intervalId);
+    };
+
+    // Primary: listen to auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY") {
-        setSessionReady(true);
-        setChecking(false);
-      } else if (event === "SIGNED_IN" && session) {
-        setSessionReady(true);
-        setChecking(false);
+      if (cancelled) return;
+      if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
+        resolveSession(true);
       } else if (event === "SIGNED_OUT") {
-        setSessionReady(false);
-        setChecking(false);
+        resolveSession(false);
       }
     });
 
-    // Check existing session (covers case where token was processed before mount)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setSessionReady(true);
-        setChecking(false);
-      } else if (isRecoveryLink) {
-        // Hash present but session not yet established — keep checking briefly
-        // Supabase SDK will process the hash and fire onAuthStateChange
-        setTimeout(() => {
-          supabase.auth.getSession().then(({ data: { session: s } }) => {
-            if (s) setSessionReady(true);
-            setChecking(false);
-          });
-        }, 1500);
-      } else {
-        setChecking(false);
-      }
-    });
+    // Secondary: poll getSession() for up to 5 seconds when recovery hash is present
+    // This handles the case where the SIGNED_IN event fires before this component mounts
+    if (isRecoveryLink) {
+      let attempts = 0;
+      intervalId = setInterval(async () => {
+        attempts++;
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          resolveSession(true);
+        } else if (attempts >= 10) {
+          // 10 × 500ms = 5s timeout
+          resolveSession(false);
+        }
+      }, 500);
+    } else {
+      // No recovery hash — just check once
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        resolveSession(!!session);
+      });
+    }
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   const handleResetPassword = async (e: React.FormEvent) => {
