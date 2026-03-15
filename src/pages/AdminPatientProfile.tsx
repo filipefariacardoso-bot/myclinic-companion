@@ -182,6 +182,12 @@ export default function AdminPatientProfile() {
   const [showExamOrderForm, setShowExamOrderForm] = useState(false);
   const [showExamResultForm, setShowExamResultForm] = useState(false);
 
+  // Attach prescription modal
+  const [showAttachModal, setShowAttachModal] = useState(false);
+  const [attachForm, setAttachForm] = useState({ title: "", file: null as File | null });
+  const [attachUploading, setAttachUploading] = useState(false);
+  const attachInputRef = useRef<HTMLInputElement>(null);
+
   // Uploading
   const [uploading, setUploading] = useState(false);
 
