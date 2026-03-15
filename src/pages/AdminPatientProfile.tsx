@@ -156,7 +156,7 @@ function PrintExamOrder({ order, clinic }: { order: ExamOrder; clinic: ClinicSet
 // ─── Main Component ────────────────────────────────────────────────────────────
 
 export default function AdminPatientProfile() {
-  const { patientId } = useParams<{ patientId: string }>();
+  const { id: patientId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const { toast } = useToast();
