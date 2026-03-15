@@ -4,25 +4,10 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Trash2, Pill, Calendar, Printer, X } from "lucide-react";
+import { ArrowLeft, Pill, Calendar, Printer, Trash2, User, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface Medication {
   name: string;
@@ -39,13 +24,13 @@ interface Prescription {
   prescription_date: string;
   medications: Medication[];
   notes: string | null;
-  created_at: string;
 }
 
 interface Profile {
   id: string;
   full_name: string;
   email: string;
+  phone: string | null;
 }
 
 interface ClinicSettings {
@@ -56,8 +41,6 @@ interface ClinicSettings {
   phone: string | null;
 }
 
-const emptyMed: Medication = { name: "", dosage: "", frequency: "", duration: "", instructions: "" };
-
 export default function AdminPrescriptions() {
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
@@ -67,17 +50,8 @@ export default function AdminPrescriptions() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [clinicSettings, setClinicSettings] = useState<ClinicSettings | null>(null);
   const [loading, setLoading] = useState(true);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedPrescription, setSelectedPrescription] = useState<Prescription | null>(null);
-  const [filterPatient, setFilterPatient] = useState("all");
-
-  const [formData, setFormData] = useState({
-    user_id: "",
-    patient_name: "",
-    prescription_date: new Date().toISOString().split("T")[0],
-    medications: [{ ...emptyMed }] as Medication[],
-    notes: "",
-  });
+  const [search, setSearch] = useState("");
+  const [printPrescription, setPrintPrescription] = useState<Prescription | null>(null);
 
   useEffect(() => {
     if (!isAdmin) { navigate("/"); return; }
@@ -88,7 +62,7 @@ export default function AdminPrescriptions() {
     try {
       const [presRes, profilesRes, clinicRes] = await Promise.all([
         supabase.from("prescriptions" as any).select("*").order("prescription_date", { ascending: false }),
-        supabase.from("profiles").select("id, full_name, email"),
+        supabase.from("profiles").select("id, full_name, email, phone"),
         supabase.from("clinic_location").select("name, address, city, state, phone").eq("is_active", true).maybeSingle(),
       ]);
       if (presRes.error) throw presRes.error;
@@ -104,78 +78,35 @@ export default function AdminPrescriptions() {
     }
   };
 
-  const addMedication = () => {
-    setFormData(prev => ({ ...prev, medications: [...prev.medications, { ...emptyMed }] }));
-  };
-
-  const removeMedication = (index: number) => {
-    setFormData(prev => ({ ...prev, medications: prev.medications.filter((_, i) => i !== index) }));
-  };
-
-  const updateMedication = (index: number, field: keyof Medication, value: string) => {
-    setFormData(prev => {
-      const meds = [...prev.medications];
-      meds[index] = { ...meds[index], [field]: value };
-      return { ...prev, medications: meds };
-    });
-  };
-
-  const handleSubmit = async () => {
-    if (!formData.user_id || !formData.prescription_date) {
-      toast({ title: "Campos obrigatórios", description: "Selecione o paciente e a data.", variant: "destructive" });
-      return;
-    }
-    if (formData.medications.some(m => !m.name)) {
-      toast({ title: "Nome do medicamento obrigatório", description: "Preencha o nome de todos os medicamentos.", variant: "destructive" });
-      return;
-    }
-    try {
-      const { error } = await supabase.from("prescriptions" as any).insert({
-        user_id: formData.user_id,
-        patient_name: formData.patient_name,
-        prescription_date: formData.prescription_date,
-        medications: formData.medications,
-        notes: formData.notes || null,
-      });
-      if (error) throw error;
-      toast({ title: "Receita criada!", description: "Receita médica adicionada com sucesso." });
-      setDialogOpen(false);
-      setFormData({ user_id: "", patient_name: "", prescription_date: new Date().toISOString().split("T")[0], medications: [{ ...emptyMed }], notes: "" });
-      fetchData();
-    } catch (error) {
-      console.error(error);
-      toast({ title: "Erro", description: "Não foi possível salvar a receita.", variant: "destructive" });
-    }
-  };
-
   const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta receita?")) return;
+    if (!confirm("Excluir esta receita?")) return;
     try {
       const { error } = await supabase.from("prescriptions" as any).delete().eq("id", id);
       if (error) throw error;
-      toast({ title: "Excluída!", description: "Receita removida com sucesso." });
+      toast({ title: "Excluída!", description: "Receita removida." });
       fetchData();
     } catch (error) {
       console.error(error);
-      toast({ title: "Erro", description: "Não foi possível excluir.", variant: "destructive" });
+      toast({ title: "Erro", variant: "destructive" });
     }
   };
 
-  const handlePrint = (prescription: Prescription) => {
-    setSelectedPrescription(prescription);
+  const handlePrint = (p: Prescription) => {
+    setPrintPrescription(p);
     setTimeout(() => window.print(), 300);
   };
 
-  const filteredPrescriptions = filterPatient === "all"
-    ? prescriptions
-    : prescriptions.filter(p => p.user_id === filterPatient);
+  const filteredProfiles = profiles.filter(p =>
+    p.full_name.toLowerCase().includes(search.toLowerCase()) ||
+    p.email.toLowerCase().includes(search.toLowerCase())
+  );
 
   if (!isAdmin) return null;
 
   return (
     <>
-      {/* Print Layout */}
-      {selectedPrescription && (
+      {/* Print layout */}
+      {printPrescription && (
         <div className="hidden print:block p-8 font-sans max-w-2xl mx-auto">
           <div className="border-b-2 border-gray-800 pb-4 mb-6">
             <h1 className="text-2xl font-bold text-gray-900">{clinicSettings?.name || "CuidarBem Pediatria"}</h1>
@@ -186,13 +117,13 @@ export default function AdminPrescriptions() {
             <h2 className="text-xl font-bold uppercase tracking-widest text-gray-800">RECEITA MÉDICA</h2>
           </div>
           <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
-            <div><span className="font-semibold">Paciente:</span> {selectedPrescription.patient_name}</div>
-            <div><span className="font-semibold">Data:</span> {new Date(selectedPrescription.prescription_date).toLocaleDateString("pt-BR")}</div>
+            <div><span className="font-semibold">Paciente:</span> {printPrescription.patient_name}</div>
+            <div><span className="font-semibold">Data:</span> {new Date(printPrescription.prescription_date).toLocaleDateString("pt-BR")}</div>
           </div>
           <div className="mb-6">
             <h3 className="font-bold text-gray-800 mb-3 uppercase text-sm tracking-wide border-b border-gray-400 pb-1">Medicamentos</h3>
             <div className="space-y-4">
-              {selectedPrescription.medications.map((med, i) => (
+              {printPrescription.medications.map((med, i) => (
                 <div key={i} className="border-l-4 border-gray-800 pl-3">
                   <p className="font-bold text-base">{i + 1}. {med.name}</p>
                   {med.dosage && <p className="text-sm"><span className="font-medium">Dosagem:</span> {med.dosage}</p>}
@@ -203,10 +134,10 @@ export default function AdminPrescriptions() {
               ))}
             </div>
           </div>
-          {selectedPrescription.notes && (
+          {printPrescription.notes && (
             <div className="mb-6">
               <h3 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">Observações</h3>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{selectedPrescription.notes}</p>
+              <p className="text-sm text-gray-700 whitespace-pre-wrap">{printPrescription.notes}</p>
             </div>
           )}
           <div className="mt-16 pt-4 border-t border-gray-400 text-center">
@@ -215,173 +146,109 @@ export default function AdminPrescriptions() {
         </div>
       )}
 
-      {/* Screen Layout */}
       <div className="min-h-screen bg-gradient-to-br from-background via-verde-menta/10 to-azul-claro/10 print:hidden">
         <header className="bg-gradient-to-r from-verde-menta to-azul-claro p-6 shadow-lg">
           <div className="max-w-7xl mx-auto">
             <Button onClick={() => navigate("/admin")} variant="ghost" size="sm" className="mb-4 text-white hover:bg-white/20">
               <ArrowLeft className="w-4 h-4 mr-2" /> Voltar ao Painel
             </Button>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl shadow-md">💊</div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white">Receitas Médicas</h1>
-                  <p className="text-sm text-white/90">Crie e gerencie receitas por paciente</p>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl shadow-md">💊</div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Receitas Médicas</h1>
+                <p className="text-sm text-white/90">Selecione um paciente para criar ou visualizar receitas</p>
               </div>
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-white text-verde-menta hover:bg-white/90">
-                    <Plus className="w-4 h-4 mr-2" /> Nova Receita
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Nova Receita Médica</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Paciente *</Label>
-                        <Select value={formData.user_id} onValueChange={(v) => {
-                          const p = profiles.find(x => x.id === v);
-                          setFormData(prev => ({ ...prev, user_id: v, patient_name: p?.full_name || "" }));
-                        }}>
-                          <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                          <SelectContent>
-                            {profiles.map(p => (
-                              <SelectItem key={p.id} value={p.id}>{p.full_name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Data *</Label>
-                        <Input type="date" value={formData.prescription_date} onChange={e => setFormData(prev => ({ ...prev, prescription_date: e.target.value }))} />
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <Label>Medicamentos *</Label>
-                        <Button type="button" variant="outline" size="sm" onClick={addMedication}>
-                          <Plus className="w-3 h-3 mr-1" /> Adicionar
-                        </Button>
-                      </div>
-                      <div className="space-y-3">
-                        {formData.medications.map((med, i) => (
-                          <div key={i} className="border rounded-lg p-3 space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-semibold text-muted-foreground">Medicamento {i + 1}</span>
-                              {formData.medications.length > 1 && (
-                                <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeMedication(i)}>
-                                  <X className="w-3 h-3" />
-                                </Button>
-                              )}
-                            </div>
-                            <Input placeholder="Nome do medicamento *" value={med.name} onChange={e => updateMedication(i, "name", e.target.value)} />
-                            <div className="grid grid-cols-2 gap-2">
-                              <Input placeholder="Dosagem (ex: 500mg)" value={med.dosage} onChange={e => updateMedication(i, "dosage", e.target.value)} />
-                              <Input placeholder="Frequência (ex: 8/8h)" value={med.frequency} onChange={e => updateMedication(i, "frequency", e.target.value)} />
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                              <Input placeholder="Duração (ex: 7 dias)" value={med.duration} onChange={e => updateMedication(i, "duration", e.target.value)} />
-                              <Input placeholder="Instruções especiais" value={med.instructions} onChange={e => updateMedication(i, "instructions", e.target.value)} />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label>Observações Gerais</Label>
-                      <Textarea value={formData.notes} onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))} placeholder="Observações adicionais..." rows={2} />
-                    </div>
-                    <Button onClick={handleSubmit} className="w-full">
-                      <Plus className="w-4 h-4 mr-2" /> Criar Receita
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
             </div>
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto p-6">
-          <div className="mb-6 flex items-center gap-4">
-            <Label className="whitespace-nowrap">Filtrar por paciente:</Label>
-            <Select value={filterPatient} onValueChange={setFilterPatient}>
-              <SelectTrigger className="w-64"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os pacientes</SelectItem>
-                {profiles.map(p => (
-                  <SelectItem key={p.id} value={p.id}>{p.full_name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <main className="max-w-7xl mx-auto p-6 space-y-6">
+          {/* Patient list */}
+          <Card className="border-2 border-verde-menta/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5 text-verde-menta" /> Pacientes
+              </CardTitle>
+              <Input
+                placeholder="Buscar paciente por nome ou email..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="max-w-sm"
+              />
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-center py-8 text-muted-foreground">Carregando...</div>
+              ) : filteredProfiles.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">Nenhum paciente encontrado.</div>
+              ) : (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {filteredProfiles.map(profile => {
+                    const initials = profile.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+                    const count = prescriptions.filter(p => p.user_id === profile.id).length;
+                    return (
+                      <Card
+                        key={profile.id}
+                        className="border border-verde-menta/20 hover:border-verde-menta/60 hover:shadow-md transition-all cursor-pointer"
+                        onClick={() => navigate(`/admin/patient/${profile.id}?tab=prescriptions`)}
+                      >
+                        <CardContent className="p-4 flex items-center gap-3">
+                          <Avatar className="w-10 h-10 shrink-0">
+                            <AvatarFallback className="bg-verde-menta/20 text-verde-menta font-bold text-sm">{initials}</AvatarFallback>
+                          </Avatar>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-sm truncate">{profile.full_name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{profile.email}</p>
+                            <p className="text-xs text-verde-menta mt-0.5">{count} receita(s)</p>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-verde-menta to-azul-claro rounded-full animate-pulse" />
-              <p className="text-muted-foreground">Carregando...</p>
-            </div>
-          ) : filteredPrescriptions.length === 0 ? (
-            <Card className="border-2 border-dashed border-verde-menta/30">
-              <CardContent className="p-12 text-center">
-                <div className="text-6xl mb-4">💊</div>
-                <h3 className="text-xl font-semibold mb-2">Nenhuma receita cadastrada</h3>
-                <p className="text-muted-foreground">Clique em "Nova Receita" para criar.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4">
-              {filteredPrescriptions.map(prescription => (
-                <Card key={prescription.id} className="border-2 border-verde-menta/30">
-                  <CardHeader className="bg-verde-menta/10">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Pill className="w-6 h-6 text-verde-menta" />
-                        <div>
-                          <CardTitle className="text-lg">Receita — {prescription.patient_name}</CardTitle>
-                          <p className="text-sm text-muted-foreground">{prescription.medications.length} medicamento(s)</p>
-                        </div>
+          {/* All prescriptions overview */}
+          <Card className="border-2 border-verde-menta/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Pill className="w-5 h-5 text-verde-menta" /> Todas as Receitas ({prescriptions.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {prescriptions.length === 0 ? (
+                <p className="text-center text-muted-foreground py-6">Nenhuma receita cadastrada ainda.</p>
+              ) : (
+                <div className="grid gap-3">
+                  {prescriptions.map(p => (
+                    <div key={p.id} className="flex items-center justify-between p-3 rounded-lg border border-verde-menta/10 bg-verde-menta/5">
+                      <div>
+                        <p className="font-medium text-sm">{p.patient_name}</p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <Calendar className="w-3 h-3" /> {new Date(p.prescription_date).toLocaleDateString("pt-BR")}
+                          &nbsp;·&nbsp; {p.medications.length} medicamento(s)
+                        </p>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="w-4 h-4" />
-                          {new Date(prescription.prescription_date).toLocaleDateString("pt-BR")}
-                        </div>
-                        <Button variant="outline" size="sm" onClick={() => handlePrint(prescription)}>
-                          <Printer className="w-4 h-4 mr-1" /> Imprimir
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => navigate(`/admin/patient/${p.user_id}?tab=prescriptions`)}>
+                          Ver paciente
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(prescription.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                        <Button variant="outline" size="sm" onClick={() => handlePrint(p)}>
+                          <Printer className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(p.id)} className="text-destructive hover:bg-destructive/10">
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="pt-4">
-                    <div className="space-y-1">
-                      {prescription.medications.map((med, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm">
-                          <span className="w-5 h-5 rounded-full bg-verde-menta/20 text-verde-menta flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
-                          <span className="font-medium">{med.name}</span>
-                          {med.dosage && <span className="text-muted-foreground">— {med.dosage}</span>}
-                          {med.frequency && <span className="text-muted-foreground">· {med.frequency}</span>}
-                          {med.duration && <span className="text-muted-foreground">· {med.duration}</span>}
-                        </div>
-                      ))}
-                    </div>
-                    {prescription.notes && (
-                      <p className="mt-2 text-sm text-muted-foreground border-t pt-2">{prescription.notes}</p>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </main>
       </div>
     </>
