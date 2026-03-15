@@ -21,6 +21,8 @@ interface Prescription {
   prescription_date: string;
   medications: Medication[];
   notes: string | null;
+  attachment_url: string | null;
+  attachment_name: string | null;
 }
 
 interface ClinicSettings {
