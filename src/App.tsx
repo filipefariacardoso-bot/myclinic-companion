@@ -203,6 +203,16 @@ const App = () => (
                 <AdminExamResults />
               </AdminRoute>
             } />
+            <Route path="/admin/exam-orders" element={
+              <AdminRoute>
+                <AdminExamOrders />
+              </AdminRoute>
+            } />
+            <Route path="/admin/prescriptions" element={
+              <AdminRoute>
+                <AdminPrescriptions />
+              </AdminRoute>
+            } />
             <Route path="/admin/clinic-settings" element={
               <AdminRoute>
                 <AdminClinicSettings />
