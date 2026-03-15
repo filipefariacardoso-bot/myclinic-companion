@@ -282,10 +282,26 @@ export default function Admin() {
               <Button
                 variant="outline"
                 className="h-auto flex-col gap-2 py-4"
+                onClick={() => navigate("/admin/exam-orders")}
+              >
+                <span className="text-2xl">🧪</span>
+                <span className="text-sm">Pedidos de Exames</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
                 onClick={() => navigate("/admin/exam-results")}
               >
                 <span className="text-2xl">🔬</span>
-                <span className="text-sm">Resultado de Exames</span>
+                <span className="text-sm">Resultados de Exames</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto flex-col gap-2 py-4"
+                onClick={() => navigate("/admin/prescriptions")}
+              >
+                <span className="text-2xl">💊</span>
+                <span className="text-sm">Receitas</span>
               </Button>
               <Button
                 variant="outline"
