@@ -20,6 +20,8 @@ import AdminAppointments from "./pages/AdminAppointments";
 import AdminSatisfaction from "./pages/AdminSatisfaction";
 import AdminGifts from "./pages/AdminGifts";
 import AdminExamResults from "./pages/AdminExamResults";
+import AdminExamOrders from "./pages/AdminExamOrders";
+import AdminPrescriptions from "./pages/AdminPrescriptions";
 import AdminClinicSettings from "./pages/AdminClinicSettings";
 import AdminQuestionarios from "./pages/AdminQuestionarios";
 import Gifts from "./pages/Gifts";
@@ -31,6 +33,8 @@ import Ebooks from "./pages/Ebooks";
 import ViewEbook from "./pages/ViewEbook";
 import Satisfaction from "./pages/Satisfaction";
 import ExamResults from "./pages/ExamResults";
+import ExamOrders from "./pages/ExamOrders";
+import Prescriptions from "./pages/Prescriptions";
 import ScheduleAppointment from "./pages/ScheduleAppointment";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./pages/ResetPassword";
@@ -199,6 +203,16 @@ const App = () => (
                 <AdminExamResults />
               </AdminRoute>
             } />
+            <Route path="/admin/exam-orders" element={
+              <AdminRoute>
+                <AdminExamOrders />
+              </AdminRoute>
+            } />
+            <Route path="/admin/prescriptions" element={
+              <AdminRoute>
+                <AdminPrescriptions />
+              </AdminRoute>
+            } />
             <Route path="/admin/clinic-settings" element={
               <AdminRoute>
                 <AdminClinicSettings />
@@ -217,6 +231,16 @@ const App = () => (
             <Route path="/exam-results" element={
               <ProtectedRoute>
                 <ExamResults />
+              </ProtectedRoute>
+            } />
+            <Route path="/exam-orders" element={
+              <ProtectedRoute>
+                <ExamOrders />
+              </ProtectedRoute>
+            } />
+            <Route path="/prescriptions" element={
+              <ProtectedRoute>
+                <Prescriptions />
               </ProtectedRoute>
             } />
             <Route path="/schedule" element={

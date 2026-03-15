@@ -167,6 +167,42 @@ export type Database = {
         }
         Relationships: []
       }
+      exam_orders: {
+        Row: {
+          created_at: string | null
+          exam_type: string
+          id: string
+          notes: string | null
+          order_date: string
+          patient_name: string
+          preparation_instructions: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          exam_type: string
+          id?: string
+          notes?: string | null
+          order_date?: string
+          patient_name: string
+          preparation_instructions?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          exam_type?: string
+          id?: string
+          notes?: string | null
+          order_date?: string
+          patient_name?: string
+          preparation_instructions?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       exam_results: {
         Row: {
           created_at: string | null
@@ -452,6 +488,39 @@ export type Database = {
           pix_key_type?: string | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      prescriptions: {
+        Row: {
+          created_at: string | null
+          id: string
+          medications: Json
+          notes: string | null
+          patient_name: string
+          prescription_date: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          medications?: Json
+          notes?: string | null
+          patient_name: string
+          prescription_date?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          medications?: Json
+          notes?: string | null
+          patient_name?: string
+          prescription_date?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
