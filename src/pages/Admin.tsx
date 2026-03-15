@@ -394,14 +394,23 @@ export default function Admin() {
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => navigate(`/admin/patient/${patient.id}`)}
-                          >
-                            <Eye className="w-4 h-4 mr-2" />
-                            Ver Detalhes
-                          </Button>
+                          <div className="flex gap-2 justify-end">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => navigate(`/admin/patient/${patient.id}`)}
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              Perfil
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => navigate(`/admin/patient/${patient.id}/questionnaire`)}
+                            >
+                              Questionários
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
