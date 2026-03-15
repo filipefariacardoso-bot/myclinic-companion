@@ -234,7 +234,16 @@ export default function AdminPatientProfile() {
 
       if (profileRes.error) throw profileRes.error;
       setPatient(profileRes.data as Patient);
-      setPrescriptions((prescRes.data as unknown as Prescription[]) || []);
+
+      // Signed URLs for prescription attachments
+      const rawPresc = (prescRes.data as unknown as Prescription[]) || [];
+      const prescWithUrls = await Promise.all(rawPresc.map(async (p) => {
+        if (!p.attachment_url) return p;
+        const { data: signed } = await supabase.storage.from("prescriptions").createSignedUrl(p.attachment_url, 3600);
+        return { ...p, attachment_url: signed?.signedUrl ?? null };
+      }));
+      setPrescriptions(prescWithUrls);
+
       setExamOrders((ordersRes.data as unknown as ExamOrder[]) || []);
       if (clinicRes.data) setClinicSettings(clinicRes.data as ClinicSettings);
 
