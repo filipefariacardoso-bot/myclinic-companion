@@ -53,7 +53,16 @@ export default function Prescriptions() {
         supabase.from("clinic_location").select("name, address, city, state, phone").eq("is_active", true).maybeSingle(),
       ]);
       if (presRes.error) throw presRes.error;
-      setPrescriptions((presRes.data as unknown as Prescription[]) || []);
+
+      // Generate signed URLs for attachments
+      const rawPresc = (presRes.data as unknown as Prescription[]) || [];
+      const prescWithUrls = await Promise.all(rawPresc.map(async (p) => {
+        if (!p.attachment_url) return p;
+        const { data: signed } = await supabase.storage.from("prescriptions").createSignedUrl(p.attachment_url, 3600);
+        return { ...p, attachment_url: signed?.signedUrl ?? null };
+      }));
+      setPrescriptions(prescWithUrls);
+
       if (clinicRes.data) setClinicSettings(clinicRes.data as ClinicSettings);
     } catch (error) {
       console.error(error);
