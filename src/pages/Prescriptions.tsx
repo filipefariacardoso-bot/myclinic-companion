@@ -152,43 +152,70 @@ export default function Prescriptions() {
               </CardContent>
             </Card>
           ) : (
-            prescriptions.map(prescription => (
+          prescriptions.map(prescription => (
               <Card key={prescription.id} className="border-2 border-verde-menta/30 hover:border-verde-menta transition-all">
                 <CardHeader className="bg-verde-menta/10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Pill className="w-6 h-6 text-verde-menta" />
+                      {prescription.attachment_url ? (
+                        <Paperclip className="w-6 h-6 text-verde-menta" />
+                      ) : (
+                        <Pill className="w-6 h-6 text-verde-menta" />
+                      )}
                       <div>
-                        <CardTitle className="text-lg">Receita Médica</CardTitle>
+                        <CardTitle className="text-lg">
+                          {prescription.attachment_url
+                            ? (prescription.notes || "Receita Anexada")
+                            : "Receita Médica"}
+                        </CardTitle>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-0.5">
                           <Calendar className="w-3 h-3" />
                           {new Date(prescription.prescription_date).toLocaleDateString("pt-BR")}
-                          <span>· {prescription.medications.length} medicamento(s)</span>
+                          {!prescription.attachment_url && (
+                            <span>· {prescription.medications.length} medicamento(s)</span>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => handlePrint(prescription)}>
-                      <Printer className="w-4 h-4 mr-1" /> Imprimir
-                    </Button>
+                    {prescription.attachment_url ? (
+                      <a href={prescription.attachment_url} target="_blank" rel="noopener noreferrer">
+                        <Button variant="outline" size="sm" type="button">
+                          <Download className="w-4 h-4 mr-1" /> Baixar
+                        </Button>
+                      </a>
+                    ) : (
+                      <Button variant="outline" size="sm" onClick={() => handlePrint(prescription)}>
+                        <Printer className="w-4 h-4 mr-1" /> Imprimir
+                      </Button>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  <div className="space-y-2">
-                    {prescription.medications.map((med, i) => (
-                      <div key={i} className="flex items-start gap-2 p-2 rounded-lg bg-muted/40">
-                        <span className="w-5 h-5 rounded-full bg-verde-menta/20 text-verde-menta flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">{i + 1}</span>
-                        <div className="text-sm">
-                          <span className="font-semibold">{med.name}</span>
-                          {med.dosage && <span className="text-muted-foreground"> — {med.dosage}</span>}
-                          {med.frequency && <span className="text-muted-foreground"> · {med.frequency}</span>}
-                          {med.duration && <span className="text-muted-foreground"> · {med.duration}</span>}
-                          {med.instructions && <p className="text-muted-foreground italic text-xs mt-0.5">{med.instructions}</p>}
-                        </div>
+                  {prescription.attachment_url ? (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <FileText className="w-4 h-4" />
+                      <span>{prescription.attachment_name || "Arquivo anexado"}</span>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        {prescription.medications.map((med, i) => (
+                          <div key={i} className="flex items-start gap-2 p-2 rounded-lg bg-muted/40">
+                            <span className="w-5 h-5 rounded-full bg-verde-menta/20 text-verde-menta flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">{i + 1}</span>
+                            <div className="text-sm">
+                              <span className="font-semibold">{med.name}</span>
+                              {med.dosage && <span className="text-muted-foreground"> — {med.dosage}</span>}
+                              {med.frequency && <span className="text-muted-foreground"> · {med.frequency}</span>}
+                              {med.duration && <span className="text-muted-foreground"> · {med.duration}</span>}
+                              {med.instructions && <p className="text-muted-foreground italic text-xs mt-0.5">{med.instructions}</p>}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  {prescription.notes && (
-                    <p className="mt-3 text-sm text-muted-foreground border-t pt-2">{prescription.notes}</p>
+                      {prescription.notes && (
+                        <p className="mt-3 text-sm text-muted-foreground border-t pt-2">{prescription.notes}</p>
+                      )}
+                    </>
                   )}
                 </CardContent>
               </Card>
