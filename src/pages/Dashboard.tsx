@@ -299,19 +299,57 @@ export default function Dashboard() {
 
           <Card 
             className="cursor-pointer hover:shadow-lg transition-all border-2 border-azul-claro/30 hover:border-azul-claro"
-            onClick={() => navigate("/exam-results")}
+            onClick={() => navigate("/exam-orders")}
           >
             <CardHeader className="bg-azul-claro/20">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-azul-claro rounded-full flex items-center justify-center text-2xl">
-                  🔬
+                  🧪
                 </div>
-                <CardTitle>Resultado de Exames</CardTitle>
+                <CardTitle>Pedidos de Exames</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="pt-4">
               <p className="text-sm text-muted-foreground">
-                Veja seus resultados de exames
+                Pedidos emitidos pelo médico
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-verde-menta/30 hover:border-verde-menta"
+            onClick={() => navigate("/exam-results")}
+          >
+            <CardHeader className="bg-verde-menta/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-verde-menta rounded-full flex items-center justify-center text-2xl">
+                  🔬
+                </div>
+                <CardTitle>Resultados de Exames</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground">
+                Adicione e visualize seus resultados
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-all border-2 border-roxo-suave/30 hover:border-roxo-suave"
+            onClick={() => navigate("/prescriptions")}
+          >
+            <CardHeader className="bg-roxo-suave/20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-roxo-suave rounded-full flex items-center justify-center text-2xl">
+                  💊
+                </div>
+                <CardTitle>Minhas Receitas</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground">
+                Receitas médicas emitidas
               </p>
             </CardContent>
           </Card>
