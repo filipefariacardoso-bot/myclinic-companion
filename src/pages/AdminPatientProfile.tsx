@@ -510,9 +510,14 @@ export default function AdminPatientProfile() {
             <TabsContent value="prescriptions">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold">Receitas Médicas</h2>
-                <Button onClick={() => setShowPrescriptionForm(v => !v)} variant={showPrescriptionForm ? "outline" : "default"}>
-                  {showPrescriptionForm ? <><X className="w-4 h-4 mr-2" /> Cancelar</> : <><Plus className="w-4 h-4 mr-2" /> Nova Receita</>}
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => { setShowPrescriptionForm(false); setShowAttachModal(true); }}>
+                    <Paperclip className="w-4 h-4 mr-2" /> Anexar Receita
+                  </Button>
+                  <Button onClick={() => setShowPrescriptionForm(v => !v)} variant={showPrescriptionForm ? "outline" : "default"}>
+                    {showPrescriptionForm ? <><X className="w-4 h-4 mr-2" /> Cancelar</> : <><Plus className="w-4 h-4 mr-2" /> Nova Receita</>}
+                  </Button>
+                </div>
               </div>
 
               {showPrescriptionForm && (
