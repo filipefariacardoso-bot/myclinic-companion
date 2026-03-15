@@ -584,34 +584,63 @@ export default function AdminPatientProfile() {
                       <CardHeader className="py-4 px-5 bg-primary/5">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-semibold text-base">Receita — {p.medications.length} medicamento(s)</p>
+                            <div className="flex items-center gap-2">
+                              {p.attachment_url ? (
+                                <Paperclip className="w-4 h-4 text-primary" />
+                              ) : (
+                                <Pill className="w-4 h-4 text-primary" />
+                              )}
+                              <p className="font-semibold text-base">
+                                {p.attachment_url
+                                  ? (p.notes || "Receita Anexada")
+                                  : `Receita — ${p.medications.length} medicamento(s)`}
+                              </p>
+                            </div>
                             <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
                               <Calendar className="w-3 h-3" /> {new Date(p.prescription_date).toLocaleDateString("pt-BR")}
                             </p>
                           </div>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handlePrintPrescription(p)}>
-                              <Printer className="w-4 h-4 mr-1" /> Imprimir
-                            </Button>
+                            {p.attachment_url ? (
+                              <a href={p.attachment_url} target="_blank" rel="noopener noreferrer">
+                                <Button variant="outline" size="sm" type="button">
+                                  <Download className="w-4 h-4 mr-1" /> Baixar
+                                </Button>
+                              </a>
+                            ) : (
+                              <Button variant="outline" size="sm" onClick={() => handlePrintPrescription(p)}>
+                                <Printer className="w-4 h-4 mr-1" /> Imprimir
+                              </Button>
+                            )}
                             <Button variant="ghost" size="icon" onClick={() => handleDeletePrescription(p.id)} className="text-destructive hover:bg-destructive/10">
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
                         </div>
                       </CardHeader>
-                      <CardContent className="py-3 px-5">
-                        <div className="space-y-1">
-                          {p.medications.map((m, i) => (
-                            <div key={i} className="flex items-center gap-2 text-sm">
-                              <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
-                              <span className="font-medium">{m.name}</span>
-                              {m.dosage && <span className="text-muted-foreground">— {m.dosage}</span>}
-                              {m.frequency && <span className="text-muted-foreground">· {m.frequency}</span>}
-                            </div>
-                          ))}
-                        </div>
-                        {p.notes && <p className="text-sm text-muted-foreground mt-2 border-t pt-2">{p.notes}</p>}
-                      </CardContent>
+                      {!p.attachment_url && (
+                        <CardContent className="py-3 px-5">
+                          <div className="space-y-1">
+                            {p.medications.map((m, i) => (
+                              <div key={i} className="flex items-center gap-2 text-sm">
+                                <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                                <span className="font-medium">{m.name}</span>
+                                {m.dosage && <span className="text-muted-foreground">— {m.dosage}</span>}
+                                {m.frequency && <span className="text-muted-foreground">· {m.frequency}</span>}
+                              </div>
+                            ))}
+                          </div>
+                          {p.notes && <p className="text-sm text-muted-foreground mt-2 border-t pt-2">{p.notes}</p>}
+                        </CardContent>
+                      )}
+                      {p.attachment_url && p.attachment_name && (
+                        <CardContent className="py-3 px-5">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <FileText className="w-4 h-4" />
+                            <span>{p.attachment_name}</span>
+                          </div>
+                        </CardContent>
+                      )}
                     </Card>
                   ))}
                 </div>
