@@ -111,12 +111,12 @@ const App = () => (
             } />
             <Route path="/admin/patient/:id" element={
               <AdminRoute>
-                <PatientDetails />
+                <AdminPatientProfile />
               </AdminRoute>
             } />
-            <Route path="/admin/patient/:patientId/profile" element={
+            <Route path="/admin/patient/:id/questionnaire" element={
               <AdminRoute>
-                <AdminPatientProfile />
+                <PatientDetails />
               </AdminRoute>
             } />
             <Route path="/cartilhas" element={
