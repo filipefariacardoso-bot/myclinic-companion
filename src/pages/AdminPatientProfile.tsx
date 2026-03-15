@@ -434,7 +434,7 @@ export default function AdminPatientProfile() {
 
         {/* Tabs */}
         <main className="max-w-5xl mx-auto p-6">
-          <Tabs defaultValue="prescriptions">
+          <Tabs defaultValue={defaultTab}>
             <TabsList className="mb-6 h-12">
               <TabsTrigger value="prescriptions" className="gap-2 px-5">
                 <Pill className="w-4 h-4" /> Receitas ({prescriptions.length})
