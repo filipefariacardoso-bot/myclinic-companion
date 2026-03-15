@@ -22,6 +22,7 @@ import AdminGifts from "./pages/AdminGifts";
 import AdminExamResults from "./pages/AdminExamResults";
 import AdminExamOrders from "./pages/AdminExamOrders";
 import AdminPrescriptions from "./pages/AdminPrescriptions";
+import AdminPatientProfile from "./pages/AdminPatientProfile";
 import AdminClinicSettings from "./pages/AdminClinicSettings";
 import AdminQuestionarios from "./pages/AdminQuestionarios";
 import Gifts from "./pages/Gifts";
