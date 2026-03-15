@@ -263,6 +263,47 @@ export default function AdminPatientProfile() {
     }
   };
 
+  // ─── Attach prescription handler ──────────────────────────────────────────
+
+  const handleAttachPrescription = async () => {
+    if (!attachForm.title.trim() || !attachForm.file || !patientId) {
+      toast({ title: "Informe o título e selecione um arquivo", variant: "destructive" });
+      return;
+    }
+    if (attachForm.file.size > 10 * 1024 * 1024) {
+      toast({ title: "Arquivo muito grande (máx. 10MB)", variant: "destructive" });
+      return;
+    }
+    setAttachUploading(true);
+    try {
+      const ext = attachForm.file.name.split(".").pop();
+      const filePath = `${patientId}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("prescriptions").upload(filePath, attachForm.file);
+      if (uploadError) throw uploadError;
+
+      const { error: dbError } = await supabase.from("prescriptions" as any).insert({
+        user_id: patientId,
+        patient_name: patient?.full_name || "",
+        prescription_date: new Date().toISOString().split("T")[0],
+        medications: [],
+        notes: attachForm.title.trim(),
+        attachment_url: filePath,
+        attachment_name: attachForm.file.name,
+      });
+      if (dbError) throw dbError;
+
+      toast({ title: "Receita anexada com sucesso!" });
+      setShowAttachModal(false);
+      setAttachForm({ title: "", file: null });
+      fetchAll();
+    } catch (err) {
+      console.error(err);
+      toast({ title: "Erro ao anexar receita", variant: "destructive" });
+    } finally {
+      setAttachUploading(false);
+    }
+  };
+
   // ─── Prescription handlers ─────────────────────────────────────────────────
 
   const handleCreatePrescription = async () => {
