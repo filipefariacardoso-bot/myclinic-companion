@@ -114,6 +114,11 @@ const App = () => (
                 <PatientDetails />
               </AdminRoute>
             } />
+            <Route path="/admin/patient/:patientId/profile" element={
+              <AdminRoute>
+                <AdminPatientProfile />
+              </AdminRoute>
+            } />
             <Route path="/cartilhas" element={
               <ProtectedRoute>
                 <Cartilhas />
