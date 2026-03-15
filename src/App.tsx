@@ -223,6 +223,16 @@ const App = () => (
                 <ExamResults />
               </ProtectedRoute>
             } />
+            <Route path="/exam-orders" element={
+              <ProtectedRoute>
+                <ExamOrders />
+              </ProtectedRoute>
+            } />
+            <Route path="/prescriptions" element={
+              <ProtectedRoute>
+                <Prescriptions />
+              </ProtectedRoute>
+            } />
             <Route path="/schedule" element={
               <ProtectedRoute>
                 <ScheduleAppointment />
