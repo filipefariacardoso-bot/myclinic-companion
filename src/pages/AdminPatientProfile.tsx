@@ -823,6 +823,68 @@ export default function AdminPatientProfile() {
           </Tabs>
         </main>
       </div>
+
+      {/* ─── Attach Prescription Modal ─────────────────────────────────────── */}
+      <Dialog open={showAttachModal} onOpenChange={setShowAttachModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Paperclip className="w-5 h-5 text-primary" /> Anexar Receita para {patient?.full_name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <Label htmlFor="attach-title">Título / Descrição *</Label>
+              <Input
+                id="attach-title"
+                placeholder="Ex: Receita de antibiótico — 15/03/2026"
+                value={attachForm.title}
+                onChange={e => setAttachForm(f => ({ ...f, title: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>Arquivo (PDF, JPG ou PNG — máx. 10MB) *</Label>
+              <div
+                className="mt-1 flex flex-col items-center justify-center border-2 border-dashed border-primary/30 rounded-lg p-6 cursor-pointer hover:border-primary/60 transition-colors"
+                onClick={() => attachInputRef.current?.click()}
+              >
+                <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                {attachForm.file ? (
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-primary">{attachForm.file.name}</p>
+                    <p className="text-xs text-muted-foreground">{(attachForm.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Clique para selecionar ou arraste o arquivo aqui</p>
+                )}
+                <input
+                  ref={attachInputRef}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0] || null;
+                    setAttachForm(f => ({ ...f, file }));
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => { setShowAttachModal(false); setAttachForm({ title: "", file: null }); }}>
+              Cancelar
+            </Button>
+            <Button onClick={handleAttachPrescription} disabled={attachUploading || !attachForm.title || !attachForm.file}>
+              {attachUploading ? (
+                <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" /> Enviando...</>
+              ) : (
+                <><Paperclip className="w-4 h-4 mr-2" /> Anexar</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
+
