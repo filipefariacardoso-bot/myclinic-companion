@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
   ArrowLeft, Plus, Trash2, Printer, X, Mail, Phone, Calendar,
-  Pill, ClipboardList, FlaskConical, Upload, FileText
+  Pill, ClipboardList, FlaskConical, Upload, FileText, Paperclip, Download
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -41,6 +42,8 @@ interface Prescription {
   prescription_date: string;
   medications: Medication[];
   notes: string | null;
+  attachment_url: string | null;
+  attachment_name: string | null;
 }
 
 interface ExamOrder {
@@ -179,6 +182,12 @@ export default function AdminPatientProfile() {
   const [showExamOrderForm, setShowExamOrderForm] = useState(false);
   const [showExamResultForm, setShowExamResultForm] = useState(false);
 
+  // Attach prescription modal
+  const [showAttachModal, setShowAttachModal] = useState(false);
+  const [attachForm, setAttachForm] = useState({ title: "", file: null as File | null });
+  const [attachUploading, setAttachUploading] = useState(false);
+  const attachInputRef = useRef<HTMLInputElement>(null);
+
   // Uploading
   const [uploading, setUploading] = useState(false);
 
@@ -225,7 +234,16 @@ export default function AdminPatientProfile() {
 
       if (profileRes.error) throw profileRes.error;
       setPatient(profileRes.data as Patient);
-      setPrescriptions((prescRes.data as unknown as Prescription[]) || []);
+
+      // Signed URLs for prescription attachments
+      const rawPresc = (prescRes.data as unknown as Prescription[]) || [];
+      const prescWithUrls = await Promise.all(rawPresc.map(async (p) => {
+        if (!p.attachment_url) return p;
+        const { data: signed } = await supabase.storage.from("prescriptions").createSignedUrl(p.attachment_url, 3600);
+        return { ...p, attachment_url: signed?.signedUrl ?? null };
+      }));
+      setPrescriptions(prescWithUrls);
+
       setExamOrders((ordersRes.data as unknown as ExamOrder[]) || []);
       if (clinicRes.data) setClinicSettings(clinicRes.data as ClinicSettings);
 
@@ -242,6 +260,47 @@ export default function AdminPatientProfile() {
       toast({ title: "Erro", description: "Não foi possível carregar os dados.", variant: "destructive" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ─── Attach prescription handler ──────────────────────────────────────────
+
+  const handleAttachPrescription = async () => {
+    if (!attachForm.title.trim() || !attachForm.file || !patientId) {
+      toast({ title: "Informe o título e selecione um arquivo", variant: "destructive" });
+      return;
+    }
+    if (attachForm.file.size > 10 * 1024 * 1024) {
+      toast({ title: "Arquivo muito grande (máx. 10MB)", variant: "destructive" });
+      return;
+    }
+    setAttachUploading(true);
+    try {
+      const ext = attachForm.file.name.split(".").pop();
+      const filePath = `${patientId}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("prescriptions").upload(filePath, attachForm.file);
+      if (uploadError) throw uploadError;
+
+      const { error: dbError } = await supabase.from("prescriptions" as any).insert({
+        user_id: patientId,
+        patient_name: patient?.full_name || "",
+        prescription_date: new Date().toISOString().split("T")[0],
+        medications: [],
+        notes: attachForm.title.trim(),
+        attachment_url: filePath,
+        attachment_name: attachForm.file.name,
+      });
+      if (dbError) throw dbError;
+
+      toast({ title: "Receita anexada com sucesso!" });
+      setShowAttachModal(false);
+      setAttachForm({ title: "", file: null });
+      fetchAll();
+    } catch (err) {
+      console.error(err);
+      toast({ title: "Erro ao anexar receita", variant: "destructive" });
+    } finally {
+      setAttachUploading(false);
     }
   };
 
@@ -451,9 +510,14 @@ export default function AdminPatientProfile() {
             <TabsContent value="prescriptions">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold">Receitas Médicas</h2>
-                <Button onClick={() => setShowPrescriptionForm(v => !v)} variant={showPrescriptionForm ? "outline" : "default"}>
-                  {showPrescriptionForm ? <><X className="w-4 h-4 mr-2" /> Cancelar</> : <><Plus className="w-4 h-4 mr-2" /> Nova Receita</>}
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => { setShowPrescriptionForm(false); setShowAttachModal(true); }}>
+                    <Paperclip className="w-4 h-4 mr-2" /> Anexar Receita
+                  </Button>
+                  <Button onClick={() => setShowPrescriptionForm(v => !v)} variant={showPrescriptionForm ? "outline" : "default"}>
+                    {showPrescriptionForm ? <><X className="w-4 h-4 mr-2" /> Cancelar</> : <><Plus className="w-4 h-4 mr-2" /> Nova Receita</>}
+                  </Button>
+                </div>
               </div>
 
               {showPrescriptionForm && (
@@ -520,34 +584,63 @@ export default function AdminPatientProfile() {
                       <CardHeader className="py-4 px-5 bg-primary/5">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-semibold text-base">Receita — {p.medications.length} medicamento(s)</p>
+                            <div className="flex items-center gap-2">
+                              {p.attachment_url ? (
+                                <Paperclip className="w-4 h-4 text-primary" />
+                              ) : (
+                                <Pill className="w-4 h-4 text-primary" />
+                              )}
+                              <p className="font-semibold text-base">
+                                {p.attachment_url
+                                  ? (p.notes || "Receita Anexada")
+                                  : `Receita — ${p.medications.length} medicamento(s)`}
+                              </p>
+                            </div>
                             <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
                               <Calendar className="w-3 h-3" /> {new Date(p.prescription_date).toLocaleDateString("pt-BR")}
                             </p>
                           </div>
                           <div className="flex gap-2">
-                            <Button variant="outline" size="sm" onClick={() => handlePrintPrescription(p)}>
-                              <Printer className="w-4 h-4 mr-1" /> Imprimir
-                            </Button>
+                            {p.attachment_url ? (
+                              <a href={p.attachment_url} target="_blank" rel="noopener noreferrer">
+                                <Button variant="outline" size="sm" type="button">
+                                  <Download className="w-4 h-4 mr-1" /> Baixar
+                                </Button>
+                              </a>
+                            ) : (
+                              <Button variant="outline" size="sm" onClick={() => handlePrintPrescription(p)}>
+                                <Printer className="w-4 h-4 mr-1" /> Imprimir
+                              </Button>
+                            )}
                             <Button variant="ghost" size="icon" onClick={() => handleDeletePrescription(p.id)} className="text-destructive hover:bg-destructive/10">
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
                         </div>
                       </CardHeader>
-                      <CardContent className="py-3 px-5">
-                        <div className="space-y-1">
-                          {p.medications.map((m, i) => (
-                            <div key={i} className="flex items-center gap-2 text-sm">
-                              <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
-                              <span className="font-medium">{m.name}</span>
-                              {m.dosage && <span className="text-muted-foreground">— {m.dosage}</span>}
-                              {m.frequency && <span className="text-muted-foreground">· {m.frequency}</span>}
-                            </div>
-                          ))}
-                        </div>
-                        {p.notes && <p className="text-sm text-muted-foreground mt-2 border-t pt-2">{p.notes}</p>}
-                      </CardContent>
+                      {!p.attachment_url && (
+                        <CardContent className="py-3 px-5">
+                          <div className="space-y-1">
+                            {p.medications.map((m, i) => (
+                              <div key={i} className="flex items-center gap-2 text-sm">
+                                <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                                <span className="font-medium">{m.name}</span>
+                                {m.dosage && <span className="text-muted-foreground">— {m.dosage}</span>}
+                                {m.frequency && <span className="text-muted-foreground">· {m.frequency}</span>}
+                              </div>
+                            ))}
+                          </div>
+                          {p.notes && <p className="text-sm text-muted-foreground mt-2 border-t pt-2">{p.notes}</p>}
+                        </CardContent>
+                      )}
+                      {p.attachment_url && p.attachment_name && (
+                        <CardContent className="py-3 px-5">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <FileText className="w-4 h-4" />
+                            <span>{p.attachment_name}</span>
+                          </div>
+                        </CardContent>
+                      )}
                     </Card>
                   ))}
                 </div>
@@ -730,6 +823,68 @@ export default function AdminPatientProfile() {
           </Tabs>
         </main>
       </div>
+
+      {/* ─── Attach Prescription Modal ─────────────────────────────────────── */}
+      <Dialog open={showAttachModal} onOpenChange={setShowAttachModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Paperclip className="w-5 h-5 text-primary" /> Anexar Receita para {patient?.full_name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <Label htmlFor="attach-title">Título / Descrição *</Label>
+              <Input
+                id="attach-title"
+                placeholder="Ex: Receita de antibiótico — 15/03/2026"
+                value={attachForm.title}
+                onChange={e => setAttachForm(f => ({ ...f, title: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>Arquivo (PDF, JPG ou PNG — máx. 10MB) *</Label>
+              <div
+                className="mt-1 flex flex-col items-center justify-center border-2 border-dashed border-primary/30 rounded-lg p-6 cursor-pointer hover:border-primary/60 transition-colors"
+                onClick={() => attachInputRef.current?.click()}
+              >
+                <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                {attachForm.file ? (
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-primary">{attachForm.file.name}</p>
+                    <p className="text-xs text-muted-foreground">{(attachForm.file.size / 1024 / 1024).toFixed(2)} MB</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Clique para selecionar ou arraste o arquivo aqui</p>
+                )}
+                <input
+                  ref={attachInputRef}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0] || null;
+                    setAttachForm(f => ({ ...f, file }));
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => { setShowAttachModal(false); setAttachForm({ title: "", file: null }); }}>
+              Cancelar
+            </Button>
+            <Button onClick={handleAttachPrescription} disabled={attachUploading || !attachForm.title || !attachForm.file}>
+              {attachUploading ? (
+                <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" /> Enviando...</>
+              ) : (
+                <><Paperclip className="w-4 h-4 mr-2" /> Anexar</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
+
