@@ -157,6 +157,8 @@ function PrintExamOrder({ order, clinic }: { order: ExamOrder; clinic: ClinicSet
 
 export default function AdminPatientProfile() {
   const { id: patientId } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") || "prescriptions";
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const { toast } = useToast();
