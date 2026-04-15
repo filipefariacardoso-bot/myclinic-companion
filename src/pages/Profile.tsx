@@ -153,6 +153,33 @@ export default function Profile() {
                     <p className="font-medium">{profile.phone}</p>
                   </div>
                 )}
+                <div className="space-y-2 pt-2 border-t">
+                  <Label htmlFor="whatsappPhone" className="text-muted-foreground text-xs uppercase tracking-wide">
+                    WhatsApp
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="whatsappPhone"
+                      type="tel"
+                      placeholder="(XX) XXXXX-XXXX"
+                      value={whatsappPhone}
+                      onChange={(e) => setWhatsappPhone(e.target.value)}
+                      className="border-2 border-azul-claro/30 focus:border-primary"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={savingWhatsapp}
+                      onClick={handleSaveWhatsapp}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4"
+                    >
+                      <Save className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Número usado para integração com WhatsApp
+                  </p>
+                </div>
               </>
             )}
           </CardContent>
