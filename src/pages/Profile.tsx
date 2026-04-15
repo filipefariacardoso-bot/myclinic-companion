@@ -27,23 +27,44 @@ export default function Profile() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [profile, setProfile] = useState<{ full_name: string; email: string; phone: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string; email: string; phone: string | null; whatsapp_phone: string | null } | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+
+  const [whatsappPhone, setWhatsappPhone] = useState("");
+  const [savingWhatsapp, setSavingWhatsapp] = useState(false);
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ newPassword?: string; confirmPassword?: string }>({});
   const [savingPassword, setSavingPassword] = useState(false);
 
+  const handleSaveWhatsapp = async () => {
+    if (!user) return;
+    setSavingWhatsapp(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ whatsapp_phone: whatsappPhone.trim() || null })
+      .eq("id", user.id);
+    setSavingWhatsapp(false);
+    if (error) {
+      toast({ variant: "destructive", title: "Erro", description: error.message });
+    } else {
+      toast({ title: "✅ WhatsApp salvo!", description: "Número atualizado com sucesso." });
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("full_name, email, phone")
+      .select("full_name, email, phone, whatsapp_phone")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setProfile(data);
+        if (data) {
+          setProfile(data);
+          setWhatsappPhone(data.whatsapp_phone || "");
+        }
         setLoadingProfile(false);
       });
   }, [user]);
