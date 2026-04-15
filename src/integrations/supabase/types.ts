@@ -540,6 +540,7 @@ export type Database = {
           id: string
           phone: string | null
           updated_at: string | null
+          whatsapp_phone: string | null
         }
         Insert: {
           consent_date?: string | null
@@ -550,6 +551,7 @@ export type Database = {
           id: string
           phone?: string | null
           updated_at?: string | null
+          whatsapp_phone?: string | null
         }
         Update: {
           consent_date?: string | null
@@ -560,6 +562,7 @@ export type Database = {
           id?: string
           phone?: string | null
           updated_at?: string | null
+          whatsapp_phone?: string | null
         }
         Relationships: []
       }

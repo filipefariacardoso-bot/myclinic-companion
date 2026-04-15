@@ -27,23 +27,44 @@ export default function Profile() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [profile, setProfile] = useState<{ full_name: string; email: string; phone: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string; email: string; phone: string | null; whatsapp_phone: string | null } | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
+
+  const [whatsappPhone, setWhatsappPhone] = useState("");
+  const [savingWhatsapp, setSavingWhatsapp] = useState(false);
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<{ newPassword?: string; confirmPassword?: string }>({});
   const [savingPassword, setSavingPassword] = useState(false);
 
+  const handleSaveWhatsapp = async () => {
+    if (!user) return;
+    setSavingWhatsapp(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ whatsapp_phone: whatsappPhone.trim() || null })
+      .eq("id", user.id);
+    setSavingWhatsapp(false);
+    if (error) {
+      toast({ variant: "destructive", title: "Erro", description: error.message });
+    } else {
+      toast({ title: "✅ WhatsApp salvo!", description: "Número atualizado com sucesso." });
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("full_name, email, phone")
+      .select("full_name, email, phone, whatsapp_phone")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setProfile(data);
+        if (data) {
+          setProfile(data);
+          setWhatsappPhone(data.whatsapp_phone || "");
+        }
         setLoadingProfile(false);
       });
   }, [user]);
@@ -132,6 +153,33 @@ export default function Profile() {
                     <p className="font-medium">{profile.phone}</p>
                   </div>
                 )}
+                <div className="space-y-2 pt-2 border-t">
+                  <Label htmlFor="whatsappPhone" className="text-muted-foreground text-xs uppercase tracking-wide">
+                    WhatsApp
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="whatsappPhone"
+                      type="tel"
+                      placeholder="(XX) XXXXX-XXXX"
+                      value={whatsappPhone}
+                      onChange={(e) => setWhatsappPhone(e.target.value)}
+                      className="border-2 border-azul-claro/30 focus:border-primary"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={savingWhatsapp}
+                      onClick={handleSaveWhatsapp}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4"
+                    >
+                      <Save className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Número usado para integração com WhatsApp
+                  </p>
+                </div>
               </>
             )}
           </CardContent>
