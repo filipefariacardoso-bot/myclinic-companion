@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Download, FileText, FileType2 } from "lucide-react";
+import { FileText, FileType2 } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import {
@@ -346,5 +346,3 @@ export function DailyAppointmentsReport({
     </Dialog>
   );
 }
-
-export { Download };
