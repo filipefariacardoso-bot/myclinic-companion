@@ -401,7 +401,7 @@ export default function AdminAppointments() {
         ) : view === "month" ? (
           <Card>
             <CardContent className="p-2 md:p-4">
-              <div className="grid grid-cols-7 text-center text-xs font-semibold text-muted-foreground mb-2">
+              <div className="grid grid-cols-7 text-center text-xs font-semibold text-gray-900 mb-2">
                 {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((d) => (
                   <div key={d} className="py-2">{d}</div>
                 ))}
