@@ -261,7 +261,7 @@ export default function Questionnaire() {
             </div>
             
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 bg-gradient-to-br from-azul-claro to-primary rounded-full flex items-center justify-center text-white font-bold">
+              <div className="w-12 h-12 mx-auto mb-2 bg-gradient-to-br from-azul-claro to-primary rounded-full flex items-center justify-center text-gray-900 font-bold">
                 {step}
               </div>
               <h2 className="text-2xl font-bold">{stepTitles[step - 1]}</h2>
@@ -842,7 +842,7 @@ export default function Questionnaire() {
             {step < totalSteps ? (
               <Button 
                 onClick={() => setStep(step + 1)} 
-                className="flex-1 bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white py-6"
+                className="flex-1 bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-gray-900 py-6"
               >
                 Próximo
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -850,7 +850,7 @@ export default function Questionnaire() {
             ) : (
               <Button 
                 onClick={handleSubmit} 
-                className="flex-1 bg-gradient-to-r from-success to-verde-menta hover:opacity-90 text-white py-6"
+                className="flex-1 bg-gradient-to-r from-success to-verde-menta hover:opacity-90 text-gray-900 py-6"
               >
                 Finalizar Questionário
               </Button>

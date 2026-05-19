@@ -44,7 +44,7 @@ export default function AdminGifts() {
             onClick={() => navigate("/admin")} 
             variant="ghost" 
             size="sm"
-            className="mb-4 text-white hover:bg-white/20"
+            className="mb-4 text-gray-900 hover:bg-white/40"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar ao Painel
@@ -54,8 +54,8 @@ export default function AdminGifts() {
               🎁
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Gerenciar Presentes e Mimos</h1>
-              <p className="text-sm text-white/90">Configure os links das redes sociais</p>
+              <h1 className="text-2xl font-bold text-gray-900">Gerenciar Presentes e Mimos</h1>
+              <p className="text-sm text-gray-800">Configure os links das redes sociais</p>
             </div>
           </div>
         </div>

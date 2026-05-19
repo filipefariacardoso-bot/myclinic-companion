@@ -136,8 +136,8 @@ export default function Admin() {
               👨‍⚕️
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Dashboard Administrativo</h1>
-              <p className="text-sm text-white/90">CuidarBem Pediatria</p>
+              <h1 className="text-2xl font-bold text-gray-900">Dashboard Administrativo</h1>
+              <p className="text-sm text-gray-800">CuidarBem Pediatria</p>
             </div>
           </div>
           <div className="flex items-center gap-3">

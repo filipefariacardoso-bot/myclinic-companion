@@ -228,7 +228,7 @@ export default function Profile() {
               <Button
                 type="submit"
                 disabled={savingPassword}
-                className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-5"
+                className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-gray-900 font-semibold py-5"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {savingPassword ? "Salvando..." : "Salvar nova senha"}

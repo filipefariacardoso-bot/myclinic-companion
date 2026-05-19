@@ -149,14 +149,14 @@ export default function AdminPrescriptions() {
       <div className="min-h-screen bg-gradient-to-br from-background via-verde-menta/10 to-azul-claro/10 print:hidden">
         <header className="bg-gradient-to-r from-verde-menta to-azul-claro p-6 shadow-lg">
           <div className="max-w-7xl mx-auto">
-            <Button onClick={() => navigate("/admin")} variant="ghost" size="sm" className="mb-4 text-white hover:bg-white/20">
+            <Button onClick={() => navigate("/admin")} variant="ghost" size="sm" className="mb-4 text-gray-900 hover:bg-white/40">
               <ArrowLeft className="w-4 h-4 mr-2" /> Voltar ao Painel
             </Button>
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl shadow-md">💊</div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Receitas Médicas</h1>
-                <p className="text-sm text-white/90">Selecione um paciente para criar ou visualizar receitas</p>
+                <h1 className="text-2xl font-bold text-gray-900">Receitas Médicas</h1>
+                <p className="text-sm text-gray-800">Selecione um paciente para criar ou visualizar receitas</p>
               </div>
             </div>
           </div>

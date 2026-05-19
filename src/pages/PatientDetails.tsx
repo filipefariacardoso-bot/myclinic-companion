@@ -144,8 +144,8 @@ export default function PatientDetails() {
               👤
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">{patient.full_name}</h1>
-              <p className="text-sm text-white/90">Informações Completas do Paciente</p>
+              <h1 className="text-2xl font-bold text-gray-900">{patient.full_name}</h1>
+              <p className="text-sm text-gray-800">Informações Completas do Paciente</p>
             </div>
           </div>
         </div>

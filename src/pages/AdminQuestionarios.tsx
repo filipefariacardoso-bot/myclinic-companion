@@ -427,8 +427,8 @@ export default function AdminQuestionarios() {
               <ArrowLeft className="w-4 h-4 mr-2" />Voltar
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-white">📋 Questionários</h1>
-              <p className="text-sm text-white/90">Gerenciar perguntas e visualizar respostas dos pacientes</p>
+              <h1 className="text-2xl font-bold text-gray-900">📋 Questionários</h1>
+              <p className="text-sm text-gray-800">Gerenciar perguntas e visualizar respostas dos pacientes</p>
             </div>
           </div>
         </div>
@@ -551,7 +551,7 @@ export default function AdminQuestionarios() {
                 </p>
               </div>
               <Button onClick={() => setAddDialogOpen(true)}
-                className="bg-gradient-to-r from-primary to-azul-claro text-white">
+                className="bg-gradient-to-r from-primary to-azul-claro text-gray-900">
                 <Plus className="w-4 h-4 mr-2" />Adicionar Campo
               </Button>
             </div>
@@ -573,7 +573,7 @@ export default function AdminQuestionarios() {
                       <CardHeader className="pb-3 cursor-pointer" onClick={() => toggleSection(sectionName)}>
                         <CardTitle className="flex items-center justify-between text-base">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-azul-claro flex items-center justify-center text-white text-sm font-bold shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-azul-claro flex items-center justify-center text-gray-900 text-sm font-bold shrink-0">
                               {sectionOrder}
                             </div>
                             <span>{sectionName}</span>
@@ -693,7 +693,7 @@ export default function AdminQuestionarios() {
                 return (
                   <div key={stepDef.step}>
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-azul-claro flex items-center justify-center text-white text-xs font-bold">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-azul-claro flex items-center justify-center text-gray-900 text-xs font-bold">
                         {stepDef.step}
                       </div>
                       <h3 className="font-semibold text-sm">{stepDef.title}</h3>
@@ -793,7 +793,7 @@ export default function AdminQuestionarios() {
               <X className="w-4 h-4 mr-1" />Cancelar
             </Button>
             <Button onClick={handleSaveField} disabled={saving}
-              className="bg-gradient-to-r from-primary to-azul-claro text-white">
+              className="bg-gradient-to-r from-primary to-azul-claro text-gray-900">
               <Save className="w-4 h-4 mr-1" />{saving ? "Salvando..." : "Salvar alterações"}
             </Button>
           </DialogFooter>
@@ -862,7 +862,7 @@ export default function AdminQuestionarios() {
               <X className="w-4 h-4 mr-1" />Cancelar
             </Button>
             <Button onClick={handleAddField} disabled={saving}
-              className="bg-gradient-to-r from-primary to-azul-claro text-white">
+              className="bg-gradient-to-r from-primary to-azul-claro text-gray-900">
               <Plus className="w-4 h-4 mr-1" />{saving ? "Adicionando..." : "Adicionar Campo"}
             </Button>
           </DialogFooter>

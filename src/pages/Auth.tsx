@@ -181,7 +181,7 @@ export default function Auth() {
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-white font-semibold py-6"
+            className="w-full bg-gradient-to-r from-primary to-azul-claro hover:opacity-90 text-gray-900 font-semibold py-6"
           >
             {view === "login" ? "Entrar" : "Cadastrar"}
           </Button>
