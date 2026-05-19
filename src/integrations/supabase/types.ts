@@ -17,33 +17,42 @@ export type Database = {
       appointments: {
         Row: {
           appointment_date: string
+          appointment_time: string | null
           appointment_type: string
           created_at: string | null
           id: string
           notes: string | null
           patient_name: string
+          patient_phone: string | null
+          specialty_or_professional: string | null
           status: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           appointment_date: string
+          appointment_time?: string | null
           appointment_type: string
           created_at?: string | null
           id?: string
           notes?: string | null
           patient_name: string
+          patient_phone?: string | null
+          specialty_or_professional?: string | null
           status?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
           appointment_date?: string
+          appointment_time?: string | null
           appointment_type?: string
           created_at?: string | null
           id?: string
           notes?: string | null
           patient_name?: string
+          patient_phone?: string | null
+          specialty_or_professional?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string
