@@ -426,7 +426,7 @@ export default function AdminAppointments() {
                         {list.slice(0, 3).map((a) => (
                           <span
                             key={a.id}
-                            className="text-[10px] md:text-xs truncate px-1 py-0.5 rounded text-white"
+                            className="text-[10px] md:text-xs truncate px-1 py-0.5 rounded"
                             style={{}}
                             title={`${formatTime(a)} ${a.patient_name} - ${a.appointment_type}`}
                           >
