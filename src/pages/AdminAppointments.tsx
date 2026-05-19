@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Mail, Pencil, Trash2, RefreshCcw, Loader2 } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Pencil, Trash2, Loader2, FileDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -51,6 +51,7 @@ import {
   subWeeks,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { DailyAppointmentsReport } from "@/components/DailyAppointmentsReport";
 
 interface Appointment {
   id: string;
@@ -133,7 +134,7 @@ export default function AdminAppointments() {
 
   const [detailsAppt, setDetailsAppt] = useState<Appointment | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-  const [resending, setResending] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -156,28 +157,6 @@ export default function AdminAppointments() {
       setAppointments((data as unknown as Appointment[]) || []);
     }
     setLoading(false);
-  }
-
-  async function sendConfirmationEmail(a: Appointment, action: "created" | "updated"): Promise<boolean> {
-    try {
-      const { error } = await supabase.functions.invoke("send-appointment-confirmation", {
-        body: {
-          patient_name: a.patient_name,
-          patient_phone: a.patient_phone,
-          appointment_date: format(new Date(a.appointment_date), "dd/MM/yyyy"),
-          appointment_time: a.appointment_time ? a.appointment_time.slice(0, 5) : format(new Date(a.appointment_date), "HH:mm"),
-          appointment_type: a.appointment_type,
-          specialty_or_professional: a.specialty_or_professional,
-          notes: a.notes,
-          action,
-        },
-      });
-      if (error) throw error;
-      return true;
-    } catch (err) {
-      console.error("Email error", err);
-      return false;
-    }
   }
 
   function openNewForm(prefillDate?: Date) {
@@ -226,34 +205,20 @@ export default function AdminAppointments() {
         status: form.status || "confirmed",
       };
 
-      let saved: Appointment | null = null;
       if (editingId) {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("appointments")
           .update(payload)
-          .eq("id", editingId)
-          .select()
-          .single();
+          .eq("id", editingId);
         if (error) throw error;
-        saved = data as unknown as Appointment;
       } else {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("appointments")
-          .insert({ ...payload, user_id: user.id })
-          .select()
-          .single();
+          .insert({ ...payload, user_id: user.id });
         if (error) throw error;
-        saved = data as unknown as Appointment;
       }
 
       toast.success(editingId ? "Agendamento atualizado" : "Agendamento gravado");
-
-      const emailOk = saved ? await sendConfirmationEmail(saved, editingId ? "updated" : "created") : false;
-      if (emailOk) {
-        toast.success("Email de confirmação enviado");
-      } else {
-        toast.error("Falha ao enviar email — você pode reenviar nos detalhes");
-      }
 
       setFormOpen(false);
       setEditingId(null);
@@ -277,14 +242,6 @@ export default function AdminAppointments() {
     setConfirmDeleteId(null);
     setDetailsAppt(null);
     loadAppointments();
-  }
-
-  async function handleResendEmail(a: Appointment) {
-    setResending(true);
-    const ok = await sendConfirmationEmail(a, "updated");
-    setResending(false);
-    if (ok) toast.success("Email reenviado");
-    else toast.error("Falha ao reenviar email");
   }
 
   // ---- Calendar helpers ----
@@ -356,10 +313,21 @@ export default function AdminAppointments() {
               <h1 className="text-2xl font-bold text-gray-900">Agenda da Clínica</h1>
               <p className="text-sm text-gray-800">Visualize e gerencie os agendamentos</p>
             </div>
-            <Button onClick={() => openNewForm()} className="bg-white text-gray-900 hover:bg-white/90">
-              <Plus className="w-4 h-4 mr-2" />
-              Novo Agendamento
-            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                onClick={() => setReportOpen(true)}
+                variant="outline"
+                className="bg-white/90 text-gray-900 hover:bg-white"
+              >
+                <FileDown className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Exportar Relatório do Dia</span>
+                <span className="sm:hidden">Relatório</span>
+              </Button>
+              <Button onClick={() => openNewForm()} className="bg-white text-gray-900 hover:bg-white/90">
+                <Plus className="w-4 h-4 mr-2" />
+                Novo Agendamento
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -606,14 +574,6 @@ export default function AdminAppointments() {
           <DialogFooter className="gap-2 flex-wrap">
             {detailsAppt && (
               <>
-                <Button
-                  variant="outline"
-                  onClick={() => handleResendEmail(detailsAppt)}
-                  disabled={resending}
-                >
-                  {resending ? <RefreshCcw className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
-                  Reenviar email
-                </Button>
                 <Button variant="outline" onClick={() => openEditForm(detailsAppt)}>
                   <Pencil className="w-4 h-4 mr-2" /> Editar
                 </Button>
