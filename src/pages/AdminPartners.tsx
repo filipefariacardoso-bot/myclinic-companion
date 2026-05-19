@@ -238,7 +238,7 @@ export default function AdminPartners() {
                     <div>
                       <h3 className="font-semibold text-lg">{partner.name}</h3>
                       {partner.specialty && (
-                        <span className="inline-block mt-1 px-2 py-1 bg-laranja-suave/20 text-laranja-suave text-xs rounded-full">
+                        <span className="inline-block mt-1 px-2 py-1 bg-laranja-suave/20 text-gray-900 text-xs rounded-full">
                           {partner.specialty}
                         </span>
                       )}

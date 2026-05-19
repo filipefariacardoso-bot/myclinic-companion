@@ -51,9 +51,9 @@ export default function Appointments() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "scheduled":
-        return "bg-azul-claro/20 text-azul-claro";
+        return "bg-azul-claro/20 text-gray-900";
       case "confirmed":
-        return "bg-success/20 text-success";
+        return "bg-success/20 text-gray-900";
       case "completed":
         return "bg-muted text-muted-foreground";
       case "cancelled":

@@ -165,8 +165,8 @@ export default function Admin() {
               <Users className="w-4 h-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-primary">{totalUsers}</div>
-              <p className="text-xs text-muted-foreground mt-1">Clientes cadastrados</p>
+              <div className="text-3xl font-bold text-gray-900">{totalUsers}</div>
+              <p className="text-xs text-gray-700 mt-1">Clientes cadastrados</p>
             </CardContent>
           </Card>
 
@@ -176,8 +176,8 @@ export default function Admin() {
               <Calendar className="w-4 h-4 text-success" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-success">{todayCount}</div>
-              <p className="text-xs text-muted-foreground mt-1">Novos registros</p>
+              <div className="text-3xl font-bold text-gray-900">{todayCount}</div>
+              <p className="text-xs text-gray-700 mt-1">Novos registros</p>
             </CardContent>
           </Card>
 
@@ -187,8 +187,8 @@ export default function Admin() {
               <FileText className="w-4 h-4 text-warning" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-warning">{questionnaires.length}</div>
-              <p className="text-xs text-muted-foreground mt-1">Pendentes</p>
+              <div className="text-3xl font-bold text-gray-900">{questionnaires.length}</div>
+              <p className="text-xs text-gray-700 mt-1">Pendentes</p>
             </CardContent>
           </Card>
 
@@ -201,7 +201,7 @@ export default function Admin() {
               <BookOpen className="w-4 h-4 text-verde-menta" />
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Gerenciar materiais</p>
+              <p className="text-sm text-gray-700">Gerenciar materiais</p>
             </CardContent>
           </Card>
         </div>

@@ -150,7 +150,7 @@ export default function ExamResults() {
             </div>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-white text-azul-claro hover:bg-white/90">
+                <Button className="bg-white text-gray-900 hover:bg-white/90">
                   <Plus className="w-4 h-4 mr-2" /> Adicionar Resultado
                 </Button>
               </DialogTrigger>

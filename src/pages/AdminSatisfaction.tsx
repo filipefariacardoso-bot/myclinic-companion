@@ -114,7 +114,7 @@ export default function AdminSatisfaction() {
               <CardTitle className="text-sm">Total de Avaliações</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-laranja-suave">{surveys.length}</p>
+              <p className="text-3xl font-bold text-gray-900">{surveys.length}</p>
             </CardContent>
           </Card>
           <Card className="border-2 border-amarelo-suave/30">
@@ -123,7 +123,7 @@ export default function AdminSatisfaction() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
-                <p className="text-3xl font-bold text-amarelo-suave">{averageRating}</p>
+                <p className="text-3xl font-bold text-gray-900">{averageRating}</p>
                 <Star className="w-6 h-6 fill-amarelo-suave text-amarelo-suave" />
               </div>
             </CardContent>
