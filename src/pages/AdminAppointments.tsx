@@ -628,11 +628,12 @@ export default function AdminAppointments() {
 
       {/* Form modal */}
       <Dialog open={formOpen} onOpenChange={(o) => { if (!o) { setFormOpen(false); setEditingId(null); } }}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
+        <DialogContent className="max-w-lg max-h-[90vh] p-0 flex flex-col">
+          <DialogHeader className="px-6 pt-6">
             <DialogTitle>{editingId ? "Editar Agendamento" : "Novo Agendamento"}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+            <div className="space-y-3 px-6 py-4 overflow-y-auto flex-1">
             <div>
               <Label>Nome do paciente *</Label>
               <Input
@@ -706,12 +707,30 @@ export default function AdminAppointments() {
                 onChange={(e) => setForm({ ...form, notes: e.target.value })}
               />
             </div>
-            <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={() => { setFormOpen(false); setEditingId(null); }}>
+            </div>
+            <DialogFooter className="flex-row gap-2 px-6 py-4 border-t bg-background sticky bottom-0">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1 sm:flex-none"
+                onClick={() => { setFormOpen(false); setEditingId(null); }}
+                disabled={saving}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={saving}>
-                {saving ? "Salvando..." : editingId ? "Atualizar" : "Agendar"}
+              <Button
+                type="submit"
+                disabled={saving}
+                className="flex-1 sm:flex-none sm:min-w-[200px]"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  editingId ? "Atualizar Agendamento" : "Confirmar Agendamento"
+                )}
               </Button>
             </DialogFooter>
           </form>
