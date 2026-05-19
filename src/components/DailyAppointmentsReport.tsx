@@ -37,6 +37,7 @@ export interface ReportAppointment {
   appointment_time: string | null;
   appointment_type: string;
   specialty_or_professional: string | null;
+  created_at?: string | null;
 }
 
 interface Props {
@@ -71,14 +72,17 @@ export function DailyAppointmentsReport({
 
   const filtered = useMemo(() => {
     const list = appointments.filter((a) => {
-      const day = format(new Date(a.appointment_date), "yyyy-MM-dd");
+      const createdSource = a.created_at ?? a.appointment_date;
+      const day = format(new Date(createdSource), "yyyy-MM-dd");
       if (day !== date) return false;
       if (professional !== "Todas") {
         return (a.specialty_or_professional ?? "") === professional;
       }
       return true;
     });
-    return list.sort((x, y) => timeOf(x).localeCompare(timeOf(y)));
+    return list.sort((x, y) =>
+      new Date(x.appointment_date).getTime() - new Date(y.appointment_date).getTime(),
+    );
   }, [appointments, date, professional]);
 
   const totals = useMemo(() => {
@@ -100,6 +104,14 @@ export function DailyAppointmentsReport({
 
   function professionalLabel(a: ReportAppointment): string {
     return a.specialty_or_professional || a.appointment_type;
+  }
+
+  function appointmentDateLabel(a: ReportAppointment): string {
+    try {
+      return format(new Date(a.appointment_date), "dd/MM/yyyy", { locale: ptBR });
+    } catch {
+      return "";
+    }
   }
 
   function exportPdf() {
@@ -133,8 +145,13 @@ export function DailyAppointmentsReport({
 
     autoTable(doc, {
       startY: summaryY + 16,
-      head: [["Hora", "Paciente", "Médica / Procedimento"]],
-      body: filtered.map((a) => [timeOf(a), a.patient_name, professionalLabel(a)]),
+      head: [["Data consulta", "Hora", "Paciente", "Médica / Procedimento"]],
+      body: filtered.map((a) => [
+        appointmentDateLabel(a),
+        timeOf(a),
+        a.patient_name,
+        professionalLabel(a),
+      ]),
       styles: { fontSize: 10, cellPadding: 6, textColor: 20 },
       headStyles: { fillColor: [220, 220, 235], textColor: 20, fontStyle: "bold" },
       theme: "grid",
@@ -159,7 +176,7 @@ export function DailyAppointmentsReport({
 
     const headerRow = new DocxTableRow({
       tableHeader: true,
-      children: ["Hora", "Paciente", "Médica / Procedimento"].map(
+      children: ["Data consulta", "Hora", "Paciente", "Médica / Procedimento"].map(
         (text) =>
           new DocxTableCell({
             borders: headerBorder,
@@ -173,7 +190,7 @@ export function DailyAppointmentsReport({
     const bodyRows = filtered.map(
       (a) =>
         new DocxTableRow({
-          children: [timeOf(a), a.patient_name, professionalLabel(a)].map(
+          children: [appointmentDateLabel(a), timeOf(a), a.patient_name, professionalLabel(a)].map(
             (text) =>
               new DocxTableCell({
                 borders: headerBorder,
@@ -225,7 +242,7 @@ export function DailyAppointmentsReport({
             new Paragraph({ children: [new TextRun({ text: "" })] }),
             new DocxTable({
               width: { size: 9360, type: WidthType.DXA },
-              columnWidths: [1400, 4480, 3480],
+              columnWidths: [1600, 1100, 3400, 3260],
               rows: [headerRow, ...bodyRows],
             }),
             new Paragraph({ children: [new TextRun({ text: "" })] }),
@@ -252,13 +269,16 @@ export function DailyAppointmentsReport({
       <DialogContent className="max-w-3xl max-h-[90vh] p-0 flex flex-col">
         <DialogHeader className="px-6 pt-6">
           <DialogTitle>Relatório Diário de Agendamentos</DialogTitle>
-          <DialogDescription>Visualize e exporte a agenda do dia.</DialogDescription>
+          <DialogDescription>
+            Lista os agendamentos <strong>criados</strong> na data selecionada,
+            independentemente da data da consulta.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="px-6 py-4 overflow-y-auto flex-1 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <Label>Data</Label>
+              <Label>Data de criação</Label>
               <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
             </div>
             <div>
@@ -283,7 +303,7 @@ export function DailyAppointmentsReport({
             <div className="text-center space-y-1">
               <div className="text-xl font-bold">{clinicName}</div>
               <div className="text-base font-semibold">Relatório Diário de Agendamentos</div>
-              <div className="text-sm capitalize">{dateLabel}</div>
+              <div className="text-sm capitalize">Criados em {dateLabel}</div>
               {professional !== "Todas" && (
                 <div className="text-xs italic text-gray-700">Filtro: {professional}</div>
               )}
@@ -298,6 +318,7 @@ export function DailyAppointmentsReport({
                 <table className="w-full text-sm border-collapse">
                   <thead>
                     <tr className="bg-gray-100">
+                      <th className="border border-gray-300 px-3 py-2 text-left w-32">Data consulta</th>
                       <th className="border border-gray-300 px-3 py-2 text-left w-24">Hora</th>
                       <th className="border border-gray-300 px-3 py-2 text-left">Paciente</th>
                       <th className="border border-gray-300 px-3 py-2 text-left">Médica / Procedimento</th>
@@ -306,6 +327,7 @@ export function DailyAppointmentsReport({
                   <tbody>
                     {filtered.map((a) => (
                       <tr key={a.id}>
+                        <td className="border border-gray-300 px-3 py-2 font-mono">{appointmentDateLabel(a)}</td>
                         <td className="border border-gray-300 px-3 py-2 font-mono">{timeOf(a)}</td>
                         <td className="border border-gray-300 px-3 py-2">{a.patient_name}</td>
                         <td className="border border-gray-300 px-3 py-2">{professionalLabel(a)}</td>
@@ -314,7 +336,7 @@ export function DailyAppointmentsReport({
                   </tbody>
                 </table>
               ) : (
-                <div className="text-center py-8 text-gray-700">Nenhum agendamento neste dia</div>
+                <div className="text-center py-8 text-gray-700">Nenhum agendamento criado neste dia</div>
               )}
             </div>
 
