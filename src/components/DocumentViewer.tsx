@@ -90,7 +90,7 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
               onClick={() => navigate(backPath)}
               variant="outline"
               size="lg"
-              className="bg-gradient-to-r from-rosa-bebe to-roxo-suave text-white border-0 hover:shadow-2xl hover:scale-105 transition-all font-rounded font-bold text-base shadow-lg"
+              className="bg-gradient-to-r from-rosa-bebe to-roxo-suave text-gray-900 border-0 hover:shadow-2xl hover:scale-105 transition-all font-rounded font-bold text-base shadow-lg"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
               Voltar
@@ -103,7 +103,7 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
                 onClick={handleDownload}
                 variant="outline"
                 size="lg"
-                className="bg-gradient-to-r from-azul-claro to-verde-menta text-white border-0 hover:shadow-2xl hover:scale-105 transition-all font-rounded font-bold text-base shadow-lg"
+                className="bg-gradient-to-r from-azul-claro to-verde-menta text-gray-900 border-0 hover:shadow-2xl hover:scale-105 transition-all font-rounded font-bold text-base shadow-lg"
               >
                 <Download className="w-5 h-5 mr-2" />
                 Baixar
@@ -112,7 +112,7 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
                 onClick={handlePrint}
                 variant="outline"
                 size="lg"
-                className="bg-gradient-to-r from-verde-menta to-amarelo-suave text-white border-0 hover:shadow-2xl hover:scale-105 transition-all font-rounded font-bold text-base shadow-lg"
+                className="bg-gradient-to-r from-verde-menta to-amarelo-suave text-gray-900 border-0 hover:shadow-2xl hover:scale-105 transition-all font-rounded font-bold text-base shadow-lg"
               >
                 <Printer className="w-5 h-5 mr-2" />
                 Imprimir
@@ -157,7 +157,7 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
                 prose-h1:text-center prose-h1:mb-16 prose-h1:mt-8
                 prose-h1:p-10 md:prose-h1:p-16 prose-h1:rounded-3xl
                 prose-h1:bg-gradient-to-br prose-h1:from-rosa-bebe/90 prose-h1:via-roxo-suave/90 prose-h1:to-azul-claro/90
-                prose-h1:text-white prose-h1:shadow-2xl prose-h1:leading-tight
+                prose-h1:text-gray-900 prose-h1:shadow-2xl prose-h1:leading-tight
                 prose-h1:border-8 prose-h1:border-white/50
                 prose-h1:transform prose-h1:hover:scale-[1.02] prose-h1:transition-transform prose-h1:duration-300
                 
@@ -233,7 +233,7 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
                 prose-thead:via-roxo-suave prose-thead:to-azul-claro
                 
                 prose-th:p-6 prose-th:text-left prose-th:font-black 
-                prose-th:text-white prose-th:text-xl prose-th:border-0
+                prose-th:text-gray-900 prose-th:text-xl prose-th:border-0
                 
                 prose-td:p-6 prose-td:border-0 prose-td:text-lg 
                 prose-td:bg-white/90 prose-td:font-medium

@@ -79,10 +79,10 @@ export default function AdminNotificationBell() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+        className="relative w-10 h-10 bg-white/40 hover:bg-white/60 rounded-full flex items-center justify-center transition-colors"
         aria-label="Notificações"
       >
-        <Bell className="w-5 h-5 text-white" />
+        <Bell className="w-5 h-5 text-gray-900" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground text-xs font-bold rounded-full flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}

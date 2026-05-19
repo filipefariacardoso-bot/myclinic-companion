@@ -464,7 +464,7 @@ export default function AdminPatientProfile() {
         {/* Header */}
         <header className="bg-gradient-to-r from-primary to-azul-claro p-6 shadow-lg">
           <div className="max-w-5xl mx-auto">
-            <Button onClick={() => navigate(-1)} variant="ghost" size="sm" className="mb-4 text-white hover:bg-white/20">
+            <Button onClick={() => navigate(-1)} variant="ghost" size="sm" className="mb-4 text-gray-900 hover:bg-white/40">
               <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
             </Button>
             <div className="flex items-center gap-4">
@@ -472,17 +472,17 @@ export default function AdminPatientProfile() {
                 <AvatarFallback className="bg-white text-primary text-xl font-bold">{initials}</AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-2xl font-bold text-white">{patient.full_name}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">{patient.full_name}</h1>
                 <div className="flex flex-wrap items-center gap-4 mt-1">
-                  <span className="flex items-center gap-1 text-white/80 text-sm">
+                  <span className="flex items-center gap-1 text-gray-800 text-sm">
                     <Mail className="w-3 h-3" /> {patient.email}
                   </span>
                   {patient.phone && (
-                    <span className="flex items-center gap-1 text-white/80 text-sm">
+                    <span className="flex items-center gap-1 text-gray-800 text-sm">
                       <Phone className="w-3 h-3" /> {patient.phone}
                     </span>
                   )}
-                  <span className="flex items-center gap-1 text-white/80 text-sm">
+                  <span className="flex items-center gap-1 text-gray-800 text-sm">
                     <Calendar className="w-3 h-3" /> Cadastro: {format(new Date(patient.created_at), "dd/MM/yyyy", { locale: ptBR })}
                   </span>
                 </div>

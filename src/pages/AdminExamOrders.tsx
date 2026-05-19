@@ -137,14 +137,14 @@ export default function AdminExamOrders() {
       <div className="min-h-screen bg-gradient-to-br from-background via-azul-claro/10 to-verde-menta/10 print:hidden">
         <header className="bg-gradient-to-r from-azul-claro to-verde-menta p-6 shadow-lg">
           <div className="max-w-7xl mx-auto">
-            <Button onClick={() => navigate("/admin")} variant="ghost" size="sm" className="mb-4 text-white hover:bg-white/20">
+            <Button onClick={() => navigate("/admin")} variant="ghost" size="sm" className="mb-4 text-gray-900 hover:bg-white/40">
               <ArrowLeft className="w-4 h-4 mr-2" /> Voltar ao Painel
             </Button>
             <div className="flex items-center gap-3">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl shadow-md">🧪</div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Pedidos de Exames</h1>
-                <p className="text-sm text-white/90">Selecione um paciente para criar ou visualizar pedidos</p>
+                <h1 className="text-2xl font-bold text-gray-900">Pedidos de Exames</h1>
+                <p className="text-sm text-gray-800">Selecione um paciente para criar ou visualizar pedidos</p>
               </div>
             </div>
           </div>

@@ -267,7 +267,7 @@ export default function AdminClinicSettings() {
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="w-full bg-gradient-to-r from-primary to-azul-claro text-white font-semibold py-6"
+                  className="w-full bg-gradient-to-r from-primary to-azul-claro text-gray-900 font-semibold py-6"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   {saving ? "Salvando..." : "Salvar Dados da Clínica"}

@@ -149,8 +149,8 @@ export default function AdminEbooks() {
                 📖
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Gerenciar E-books</h1>
-                <p className="text-sm text-white/90">Adicione e edite materiais educativos</p>
+                <h1 className="text-2xl font-bold text-gray-900">Gerenciar E-books</h1>
+                <p className="text-sm text-gray-800">Adicione e edite materiais educativos</p>
               </div>
             </div>
             <Button onClick={() => setShowForm(!showForm)} className="bg-white text-roxo-suave hover:bg-white/90">

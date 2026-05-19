@@ -353,8 +353,8 @@ export default function AdminAppointments() {
           </Button>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-white">Agenda da Clínica</h1>
-              <p className="text-sm text-white/90">Visualize e gerencie os agendamentos</p>
+              <h1 className="text-2xl font-bold text-gray-900">Agenda da Clínica</h1>
+              <p className="text-sm text-gray-800">Visualize e gerencie os agendamentos</p>
             </div>
             <Button onClick={() => openNewForm()} className="bg-white text-rosa-bebe hover:bg-white/90">
               <Plus className="w-4 h-4 mr-2" />
@@ -426,7 +426,7 @@ export default function AdminAppointments() {
                         {list.slice(0, 3).map((a) => (
                           <span
                             key={a.id}
-                            className="text-[10px] md:text-xs truncate px-1 py-0.5 rounded text-white"
+                            className="text-[10px] md:text-xs truncate px-1 py-0.5 rounded"
                             style={{}}
                             title={`${formatTime(a)} ${a.patient_name} - ${a.appointment_type}`}
                           >

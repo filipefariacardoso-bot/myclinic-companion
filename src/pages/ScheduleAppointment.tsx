@@ -308,7 +308,7 @@ export default function ScheduleAppointment() {
                                 isBooked
                                   ? "bg-muted/40 text-muted-foreground border-muted/30 cursor-not-allowed line-through"
                                   : isSelected
-                                  ? "bg-azul-claro text-white border-azul-claro shadow-md scale-105"
+                                  ? "bg-azul-claro text-gray-900 border-azul-claro shadow-md scale-105"
                                   : "bg-background hover:bg-azul-claro/10 border-azul-claro/30 hover:border-azul-claro"
                               )}
                             >
@@ -334,7 +334,7 @@ export default function ScheduleAppointment() {
                                 isBooked
                                   ? "bg-muted/40 text-muted-foreground border-muted/30 cursor-not-allowed line-through"
                                   : isSelected
-                                  ? "bg-verde-menta text-white border-verde-menta shadow-md scale-105"
+                                  ? "bg-verde-menta text-gray-900 border-verde-menta shadow-md scale-105"
                                   : "bg-background hover:bg-verde-menta/10 border-verde-menta/30 hover:border-verde-menta"
                               )}
                             >
@@ -430,7 +430,7 @@ export default function ScheduleAppointment() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-azul-claro to-verde-menta text-white font-semibold h-12 text-base"
+                  className="w-full bg-gradient-to-r from-azul-claro to-verde-menta text-gray-900 font-semibold h-12 text-base"
                 >
                   {submitting ? "Agendando..." : "✅ Confirmar Agendamento"}
                 </Button>
