@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Mail, Pencil, Trash2, RefreshCcw } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Mail, Pencil, Trash2, RefreshCcw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
