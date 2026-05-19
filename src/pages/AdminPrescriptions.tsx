@@ -199,7 +199,7 @@ export default function AdminPrescriptions() {
                           <div className="min-w-0 flex-1">
                             <p className="font-semibold text-sm truncate">{profile.full_name}</p>
                             <p className="text-xs text-muted-foreground truncate">{profile.email}</p>
-                            <p className="text-xs text-verde-menta mt-0.5">{count} receita(s)</p>
+                            <p className="text-xs text-gray-700 mt-0.5">{count} receita(s)</p>
                           </div>
                           <ExternalLink className="w-4 h-4 text-muted-foreground shrink-0" />
                         </CardContent>

@@ -419,7 +419,7 @@ export default function AdminAppointments() {
                         inMonth ? "bg-card" : "bg-muted/30 text-muted-foreground"
                       } ${isToday ? "border-rosa-bebe border-2 ring-2 ring-rosa-bebe/30" : "border-border"}`}
                     >
-                      <div className={`text-xs font-semibold ${isToday ? "text-rosa-bebe" : ""}`}>
+                      <div className={`text-xs font-semibold text-gray-900`}>
                         {format(d, "d")}
                       </div>
                       <div className="flex flex-col gap-0.5 overflow-hidden">
@@ -465,7 +465,7 @@ export default function AdminAppointments() {
                         className="text-left"
                       >
                         <div className="text-xs text-muted-foreground uppercase">{format(d, "EEE", { locale: ptBR })}</div>
-                        <div className={`text-lg font-bold ${isToday ? "text-rosa-bebe" : ""}`}>{format(d, "dd/MM")}</div>
+                        <div className={`text-lg font-bold text-gray-900`}>{format(d, "dd/MM")}</div>
                       </button>
                       <div className="flex flex-col gap-1 overflow-y-auto">
                         {list.map((a) => (
@@ -518,7 +518,7 @@ export default function AdminAppointments() {
                     className="text-left p-3 rounded-lg border hover:bg-accent flex items-center justify-between gap-3"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="font-mono font-semibold text-rosa-bebe w-14">{formatTime(a)}</div>
+                      <div className="font-mono font-semibold text-gray-900 w-14">{formatTime(a)}</div>
                       <div>
                         <div className="font-medium">{a.patient_name}</div>
                         <div className="text-xs text-muted-foreground">
@@ -556,7 +556,7 @@ export default function AdminAppointments() {
                   className="w-full text-left p-3 rounded-lg border hover:bg-accent flex items-center justify-between"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="font-mono font-semibold text-rosa-bebe w-14">{formatTime(a)}</div>
+                    <div className="font-mono font-semibold text-gray-900 w-14">{formatTime(a)}</div>
                     <div>
                       <div className="font-medium">{a.patient_name}</div>
                       <div className="text-xs text-muted-foreground">{a.specialty_or_professional ?? "—"}</div>
