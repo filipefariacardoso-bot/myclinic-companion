@@ -356,7 +356,7 @@ export default function AdminAppointments() {
               <h1 className="text-2xl font-bold text-gray-900">Agenda da Clínica</h1>
               <p className="text-sm text-gray-800">Visualize e gerencie os agendamentos</p>
             </div>
-            <Button onClick={() => openNewForm()} className="bg-white text-rosa-bebe hover:bg-white/90">
+            <Button onClick={() => openNewForm()} className="bg-white text-gray-900 hover:bg-white/90">
               <Plus className="w-4 h-4 mr-2" />
               Novo Agendamento
             </Button>
