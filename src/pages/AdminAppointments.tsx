@@ -717,6 +717,14 @@ export default function AdminAppointments() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <DailyAppointmentsReport
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        appointments={appointments}
+        professionalOptions={PROFESSIONAL_OPTIONS}
+        userName={user?.user_metadata?.full_name || user?.email || "Admin"}
+      />
     </div>
   );
 }
