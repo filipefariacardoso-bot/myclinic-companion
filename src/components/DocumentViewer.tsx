@@ -19,14 +19,17 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
   const [loading, setLoading] = useState(true);
   const [isPDF, setIsPDF] = useState(false);
   const [isMarkdown, setIsMarkdown] = useState(false);
+  const [isHTML, setIsHTML] = useState(false);
 
   useEffect(() => {
     const urlLower = fileUrl.toLowerCase();
     const pdf = urlLower.endsWith(".pdf") || urlLower.includes(".pdf?");
     const md = urlLower.endsWith(".md") || urlLower.endsWith(".markdown");
+    const html = urlLower.endsWith(".html") || urlLower.endsWith(".htm") || urlLower.includes(".html?") || urlLower.includes(".htm?");
 
     setIsPDF(pdf);
     setIsMarkdown(md);
+    setIsHTML(html);
 
     if (md) {
       loadDocument();
@@ -140,6 +143,17 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
               <p className="mt-4 text-center text-sm text-muted-foreground print:hidden">
                 Se o documento não aparecer, toque em "Baixar" para abrir no seu aplicativo de PDF.
               </p>
+            </div>
+          </Card>
+        ) : isHTML ? (
+          <Card className="bg-white/95 backdrop-blur-xl shadow-2xl border-0 rounded-3xl overflow-hidden print:shadow-none">
+            <div className="p-2 md:p-4 lg:p-6 h-[calc(100vh-220px)]">
+              <iframe
+                src={fileUrl}
+                title={title}
+                className="w-full h-full rounded-2xl border-0 shadow-2xl bg-white"
+                sandbox="allow-same-origin allow-popups allow-scripts"
+              />
             </div>
           </Card>
         ) : isMarkdown ? (
