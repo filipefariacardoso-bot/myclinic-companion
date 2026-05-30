@@ -133,7 +133,7 @@ export default function DocumentViewer({ fileUrl, title, backPath = "/" }: Docum
           <Card className="bg-white/95 backdrop-blur-xl shadow-2xl border-0 rounded-3xl overflow-hidden print:shadow-none">
             <div className="p-2 md:p-4 lg:p-6 h-[calc(100vh-220px)]">
               <iframe
-                src={`https://docs.google.com/viewer?url=${encodeURIComponent(window.location.origin + fileUrl)}&embedded=true`}
+                src={`${fileUrl}#view=FitH`}
                 title={title}
                 className="w-full h-full rounded-2xl border-0 shadow-2xl bg-white"
               />
