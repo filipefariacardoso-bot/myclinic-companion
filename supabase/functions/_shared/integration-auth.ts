@@ -1,11 +1,11 @@
-// Server-to-server auth for the external WhatsApp integration.
+// Server-to-server shared-secret auth helpers.
 export const jsonHeaders = { "Content-Type": "application/json" };
 
 export function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), { status, headers: jsonHeaders });
 }
 
-function timingSafeEqual(a: string, b: string): boolean {
+export function timingSafeEqual(a: string, b: string): boolean {
   const enc = new TextEncoder();
   const ab = enc.encode(a);
   const bb = enc.encode(b);
@@ -17,13 +17,31 @@ function timingSafeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
-/** Returns an error Response if the caller is not authorized, otherwise null. Fails closed. */
-export function checkIntegrationSecret(req: Request): Response | null {
-  const expected = Deno.env.get("WHATSAPP_INTEGRATION_SECRET");
+/**
+ * Generic fail-closed shared-secret check.
+ * 503 if the secret env var is missing, 401 if the header is missing/wrong, null if OK.
+ * If `bearer` is true, the header value must be "Bearer <secret>".
+ */
+export function checkSharedSecret(
+  req: Request,
+  secretName: string,
+  headerName: string,
+  bearer = false,
+): Response | null {
+  const expected = Deno.env.get(secretName);
   if (!expected) return json({ error: "Service unavailable" }, 503);
-  const provided = req.headers.get("x-integration-secret");
+  let provided = req.headers.get(headerName) ?? "";
+  if (bearer) {
+    const m = /^Bearer ([^\s,]+)$/.exec(provided);
+    provided = m?.[1] ?? "";
+  }
   if (!provided || !timingSafeEqual(provided, expected)) {
     return json({ error: "Unauthorized" }, 401);
   }
   return null;
+}
+
+/** Returns an error Response if the caller is not authorized, otherwise null. Fails closed. */
+export function checkIntegrationSecret(req: Request): Response | null {
+  return checkSharedSecret(req, "WHATSAPP_INTEGRATION_SECRET", "x-integration-secret");
 }

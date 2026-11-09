@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,6 +21,28 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
+    // Only signed-in admins may trigger this email.
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!authHeader.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader } } });
+    const { data: claims, error: claimsErr } = await sb.auth.getClaims(authHeader.slice(7));
+    const uid = claims?.claims?.sub;
+    if (claimsErr || !uid) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const { data: isAdmin } = await sb.rpc("has_role", { _user_id: uid, _role: "admin" });
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    const fromEmail = Deno.env.get("RESEND_FROM_EMAIL");
+    if (!fromEmail) {
+      console.error("send-appointment-confirmation: configuração pendente — secret RESEND_FROM_EMAIL não definido; nenhum e-mail enviado.");
+      return new Response(JSON.stringify({ error: "Email sender not configured" }), { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     const apiKey = Deno.env.get("RESEND_API_KEY");
     if (!apiKey) {
       return new Response(JSON.stringify({ error: "RESEND_API_KEY não configurada" }), {
@@ -75,7 +98,7 @@ serve(async (req) => {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: "Lumi Agenda <onboarding@resend.dev>",
+        from: fromEmail,
         to: [RECIPIENT],
         subject,
         html,
@@ -84,7 +107,7 @@ serve(async (req) => {
 
     const result = await resp.json();
     if (!resp.ok) {
-      console.error("Resend error", result);
+      console.error("Resend error", resp.status, result?.message);
       return new Response(JSON.stringify({ error: result?.message || "Falha ao enviar email", details: result }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

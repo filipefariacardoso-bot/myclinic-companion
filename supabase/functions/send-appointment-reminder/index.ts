@@ -1,27 +1,17 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkSharedSecret, json } from "../_shared/integration-auth.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
-};
-
+// Called only by the managed scheduler (Authorization: Bearer <LOVABLE_CRON_SECRET>). No CORS.
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const authError = checkSharedSecret(req, 'LOVABLE_CRON_SECRET', 'authorization', true);
+  if (authError) return authError;
 
   try {
-    // Protect this function with a shared secret so only the cron job can trigger it
-    const CRON_SECRET = Deno.env.get('CRON_SECRET');
-    if (CRON_SECRET) {
-      const providedSecret = req.headers.get('x-cron-secret');
-      if (providedSecret !== CRON_SECRET) {
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
+    const RESEND_FROM_EMAIL = Deno.env.get('RESEND_FROM_EMAIL');
+    if (!RESEND_FROM_EMAIL) {
+      console.error('send-appointment-reminder: configuração pendente — secret RESEND_FROM_EMAIL não definido; nenhum e-mail enviado.');
+      return json({ error: 'Email sender not configured' }, 503);
     }
 
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
@@ -57,7 +47,7 @@ serve(async (req) => {
     if (error) throw error;
     if (!appointments || appointments.length === 0) {
       return new Response(JSON.stringify({ success: true, sent: 0, message: 'No appointments in window' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
@@ -72,7 +62,7 @@ serve(async (req) => {
         .single();
 
       if (!profile?.email) {
-        console.log(`No email found for user ${appointment.user_id}, skipping reminder`);
+        console.log(`No email for appointment ${appointment.id}, skipping reminder`);
         continue;
       }
 
@@ -108,7 +98,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Clínica CuidarBem <onboarding@resend.dev>',
+          from: RESEND_FROM_EMAIL,
           to: [profile.email],
           subject: `🔔 Lembrete: Consulta amanhã — ${formattedTime}h`,
           html: `
@@ -172,14 +162,14 @@ serve(async (req) => {
     }
 
     return new Response(JSON.stringify({ success: true, sent: sentCount, total: appointments.length }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     // Log details server-side only; return a generic message to the caller
     console.error('Error in reminder function:', error);
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 });
