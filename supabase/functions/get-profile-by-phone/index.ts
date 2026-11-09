@@ -1,60 +1,38 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
+import { checkIntegrationSecret, json } from "../_shared/integration-auth.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response(null, { status: 204 });
   }
 
-  if (req.method !== "GET") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
-      status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
+  const authError = checkIntegrationSecret(req);
+  if (authError) return authError;
 
-  const url = new URL(req.url);
-  const phone = url.searchParams.get("phone");
+  if (req.method !== "GET") return json({ error: "Method not allowed" }, 405);
 
-  if (!phone || phone.trim().length < 8) {
-    return new Response(JSON.stringify({ error: "Parâmetro 'phone' inválido ou ausente" }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  const phone = new URL(req.url).searchParams.get("phone")?.trim();
+  if (!phone || phone.length < 8 || phone.length > 20) {
+    return json({ error: "Parâmetro 'phone' inválido ou ausente" }, 400);
   }
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, full_name, email, phone, whatsapp_phone")
-    .eq("whatsapp_phone", phone.trim())
+    .select("id, full_name")
+    .eq("whatsapp_phone", phone)
     .maybeSingle();
 
   if (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error("get-profile-by-phone: query failed");
+    return json({ error: "Erro interno" }, 500);
   }
+  if (!data) return json({ error: "Perfil não encontrado" }, 404);
 
-  if (!data) {
-    return new Response(JSON.stringify({ error: "Perfil não encontrado" }), {
-      status: 404,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  return new Response(JSON.stringify({ profile: data }), {
-    status: 200,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+  const firstName = (data.full_name ?? "").trim().split(/\s+/)[0] ?? "";
+  return json({ profile: { id: data.id, first_name: firstName } }, 200);
 });
